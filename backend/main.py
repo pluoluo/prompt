@@ -1,6 +1,8 @@
 import os
 import json
 import httpx
+from dotenv import load_dotenv
+load_dotenv()
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
