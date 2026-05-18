@@ -17,25 +17,55 @@ AI 图像提示词门户网站 | 基于 awesome-gpt-image-2 体系
 
 ## 快速启动
 
-### 后端
+### 1. 配置环境变量
 
 ```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn main:app --host 0.0.0.0 --port 8768
+cp .env.example .env
+# 编辑 .env，填入 MINIMAX_API_KEY 和 IMAGE_API_URL
 ```
 
-### 前端
+`.env` 内容示例：
+```env
+MINIMAX_API_KEY=your_api_key_here
+IMAGE_API_URL=http://localhost:8766
+```
+
+### 2. 启动后端
+
+```bash
+# 方式一：启动脚本（推荐）
+./start.sh start
+
+# 方式二：直接运行
+python3 -m backend.main
+
+# 方式三：systemd 守护（需安装）
+sudo cp prompt-portal.service /etc/systemd/system/
+sudo systemctl enable prompt-portal
+sudo systemctl start prompt-portal
+```
+
+其他命令：
+```bash
+./start.sh stop     # 停止
+./start.sh restart  # 重启
+./start.sh status   # 查看状态
+```
+
+### 3. 启动前端
 
 直接用浏览器打开 `frontend/index.html`
 
-或使用 nginx 托管:
+或使用 nginx 托管：
 
 ```nginx
 server {
     listen 80;
     root /path/to/prompt/frontend;
     index index.html;
+    location /api/ {
+        proxy_pass http://127.0.0.1:8768/api/;
+    }
 }
 ```
 
