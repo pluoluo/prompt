@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Portal - AI 图像提示词库</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            color: #fff;
+            background: #252525;
+        }
+        
+        .nav-item.active {
+            color: #00d4ff;
+            border-left-color: #00d4ff;
+            background: #252525;
+        }
+        
+        .category-list {
+            margin-top: 10px;
+        }
+        
+        .category-item {
+            padding: 10px 20px 10px 40px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .category-item:hover {
+            color: #fff;
+            background: #222;
+        }
+        
+        .category-item.active {
+            color: #00d4ff;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #00d4ff;
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            background: #00b8e6;
+        }
+        
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        
+        .btn-secondary:hover {
+            background: #444;
+        }
+        
+        /* Template Grid */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .template-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .template-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .card-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #252525;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        
+        .card-prompt {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .card-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-tag {
+            padding: 3px 8px;
+            background: #222;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        /* Editor Page */
+        .editor-container {
+            max-width: 900px;
+        }
+        
+        .editor-header {
+            margin-bottom: 20px;
+        }
+        
+        .template-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .prompt-textarea {
+            width: 100%;
+            height: 400px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            resize: none;
+            line-height: 1.6;
+        }
+        
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .char-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .copy-success {
+            color: #00ff00;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        /* Match Page */
+        .match-container {
+            max-width: 800px;
+        }
+        
+        .match-input-section {
+            margin-bottom: 30px;
+        }
+        
+        .match-textarea {
+            width: 100%;
+            height: 120px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+        }
+        
+        .match-textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        
+        .match-hint {
+            margin-top: 10px;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .match-result {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .result-section {
+            margin-bottom: 20px;
+        }
+        
+        .result-label {
+            color: #00d4ff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .result-content {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .matched-templates {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .matched-template {
+            padding: 12px;
+            background: #252525;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .matched-template:hover {
+            background: #303030;
+        }
+        
+        /* Submit Page */
+        .submit-container {
+            max-width: 700px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px 15px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        
+        .form-textarea {
+            height: 200px;
+            resize: none;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+        
+        .submit-success {
+            background: #1a3a1a;
+            border: 1px solid #2a5a2a;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #00ff00;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            .template-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="logo">Prompt Portal</div>
+                <div class="nav-list">
+                    <div class="nav-item" :class="{active: currentPage === 'home'}" @click="navigate('home')">
+                        模板库
+                    </div>
+                    <div class="nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
+                        AI 智能匹配
+                    </div>
+                    <div class="nav-item" :class="{active: currentPage === 'submit'}" @click="navigate('submit')">
+                        提交模板
+                    </div>
+                </div>
+                
+                <div class="category-list" v-if="currentPage === 'home'">
+                    <div class="category-item" :class="{active: selectedCategory === ''}" @click="selectCategory('')">
+                        全部
+                    </div>
+                    <div class="category-item" v-for="cat in categories" :key="cat" 
+                         :class="{active: selectedCategory === cat}" @click="selectCategory(cat)">
+                        {{ cat }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Home Page -->
+                <div v-if="currentPage === 'home'">
+                    <div class="page-header">
+                        <h1 class="page-title">{{ selectedCategory || '全部模板' }}</h1>
+                        <span style="color: #666">{{ filteredTemplates.length }} 个模板</span>
+                    </div>
+                    
+                    <div class="template-grid" v-if="filteredTemplates.length">
+                        <div class="template-card" v-for="tpl in filteredTemplates" :key="tpl.id"
+                             @click="editTemplate(tpl.id)">
+                            <div class="card-title">{{ tpl.title }}</div>
+                            <span class="card-category">{{ tpl.category }}</span>
+                            <div class="card-prompt">{{ tpl.prompt }}</div>
+                            <div class="card-meta">
+                                <span class="meta-tag" v-for="s in tpl.styles.slice(0,3)" :key="s">{{ s }}</span>
+                                <span class="meta-tag" v-for="sc in tpl.scenes.slice(0,2)" :key="sc">{{ sc }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="empty-state" v-else>
+                        <p>暂无模板</p>
+                    </div>
+                </div>
+                
+                <!-- Edit Page -->
+                <div v-if="currentPage === 'edit'">
+                    <div class="editor-container">
+                        <div class="editor-header">
+                            <button class="btn btn-secondary" @click="navigate('home')" style="margin-bottom: 15px;">
+                                ← 返回列表
+                            </button>
+                            <h1 class="template-title">{{ currentTemplate?.title || '模板编辑' }}</h1>
+                            <span class="card-category">{{ currentTemplate?.category }}</span>
+                        </div>
+                        
+                        <div class="result-section" v-if="currentTemplate?.description">
+                            <div class="result-label">中文说明</div>
+                            <div class="result-content">{{ currentTemplate.description }}</div>
+                        </div>
+                        
+                        <textarea class="prompt-textarea" v-model="editedPrompt" 
+                                  @input="updateCharCount"></textarea>
+                        
+                        <div class="editor-footer">
+                            <span class="char-count">{{ charCount }} 字符</span>
+                            <div>
+                                <span v-if="copySuccess" class="copy-success">已复制!</span>
+                                <button class="btn btn-primary" @click="copyPrompt">一键复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Match Page -->
+                <div v-if="currentPage === 'match'">
+                    <div class="match-container">
+                        <div class="page-header">
+                            <h1 class="page-title">AI 智能匹配</h1>
+                        </div>
+                        
+                        <div class="match-input-section">
+                            <textarea class="match-textarea" v-model="matchInput" 
+                                      placeholder="描述你想要的效果，例如：我要一张科技感的海报，有赛博朋克风格..."></textarea>
+                            <div class="match-hint">用中文或英文描述你的需求，AI会帮你找到最匹配的模板并优化</div>
+                        </div>
+                        
+                        <button class="btn btn-primary" @click="doMatch" :disabled="matching || !matchInput.trim()">
+                            {{ matching ? '匹配中...' : '开始匹配' }}
+                        </button>
+                        
+                        <div class="match-result" v-if="matchResult">
+                            <div class="result-section">
+                                <div class="result-label">匹配理由</div>
+                                <div class="result-content">{{ matchResult.reason }}</div>
+                            </div>
+                            
+                            <div class="result-section">
+                                <div class="result-label">匹配的模板</div>
+                                <div class="matched-templates">
+                                    <div class="matched-template" v-for="tpl in matchResult.matched_templates" 
+                                         :key="tpl.id" @click="editTemplate(tpl.id)">
+                                        {{ tpl.title }} - {{ tpl.category }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="result-section">
+                                <div class="result-label">优化后的 Prompt</div>
+                                <div class="result-content" style="white-space: pre-wrap;">{{ matchResult.optimized_prompt }}</div>
+                            </div>
+                            
+                            <button class="btn btn-primary" @click="copyOptimizedPrompt" style="margin-top: 15px;">
+                                复制优化后的 Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Page -->
+                <div v-if="currentPage === 'submit'">
+                    <div class="submit-container">
+                        <div class="page-header">
+                            <h1 class="page-title">提交新模板</h1>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">标题</label>
+                            <input type="text" class="form-input" v-model="submitForm.title" 
+                                   placeholder="输入模板标题">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">分类</label>
+                            <select class="form-select" v-model="submitForm.category">
+                                <option value="">选择分类</option>
+                                <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Prompt 内容（英文）</label>
+                            <textarea class="form-textarea" v-model="submitForm.prompt"
+                                      placeholder="输入英文 Prompt..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">中文说明（可选）</label>
+                            <textarea class="form-textarea" v-model="submitForm.description"
+                                      placeholder="描述这个模板的用途和特点..." style="height: 100px;"></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" @click="submitTemplate" 
+                                :disabled="submitting || !submitForm.title || !submitForm.prompt">
+                            {{ submitting ? '提交中...' : '提交模板' }}
+                        </button>
+                        
+                        <div class="submit-success" v-if="submitSuccess">
+                            模板提交成功！等待审核。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const { createApp, ref, computed, onMounted, watch } = Vue;
+        
+        const API_BASE = 'http://localhost:8768';
+        
+        createApp({
+            setup() {
+                const currentPage = ref('home');
+                const templates = ref([]);
+                const categories = ref([]);
+                const selectedCategory = ref('');
+                const currentTemplate = ref(null);
+                const editedPrompt = ref('');
+                const charCount = ref(0);
+                const copySuccess = ref(false);
+                const matchInput = ref('');
+                const matching = ref(false);
+                const matchResult = ref(null);
+                const submitting = ref(false);
+                const submitSuccess = ref(false);
+                
+                const submitForm = ref({
+                    title: '',
+                    prompt: '',
+                    category: '',
+                    description: ''
+                });
+                
+                const filteredTemplates = computed(() => {
+                    if (!selectedCategory.value) return templates.value;
+                    return templates.value.filter(t => t.category === selectedCategory.value);
+                });
+                
+                async function loadTemplates() {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/templates`);
+                        templates.value = await res.json();
+                    } catch (e) {
+                        console.error('Failed to load templates:', e);
+                        templates.value = [];
+                    }
+                }
+                
+                async function loadCategories() {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/categories`);
+                        categories.value = await res.json();
+                    } catch (e) {
+                        console.error('Failed to load categories:', e);
+                        categories.value = [];
+                    }
+                }
+                
+                function navigate(page) {
+                    currentPage.value = page;
+                    matchResult.value = null;
+                    submitSuccess.value = false;
+                    window.location.hash = page;
+                }
+                
+                function selectCategory(cat) {
+                    selectedCategory.value = cat;
+                }
+                
+                async function editTemplate(id) {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/templates/${id}`);
+                        currentTemplate.value = await res.json();
+                        editedPrompt.value = currentTemplate.value.prompt;
+                        charCount.value = editedPrompt.value.length;
+                        currentPage.value = 'edit';
+                        window.location.hash = 'edit/' + id;
+                    } catch (e) {
+                        console.error('Failed to load template:', e);
+                    }
+                }
+                
+                function updateCharCount() {
+                    charCount.value = editedPrompt.value.length;
+                }
+                
+                async function copyPrompt() {
+                    try {
+                        await navigator.clipboard.writeText(editedPrompt.value);
+                        copySuccess.value = true;
+                        setTimeout(() => copySuccess.value = false, 2000);
+                    } catch (e) {
+                        console.error('Copy failed:', e);
+                    }
+                }
+                
+                async function doMatch() {
+                    if (!matchInput.value.trim()) return;
+                    matching.value = true;
+                    try {
+                        const res = await fetch(`${API_BASE}/api/match`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ user_input: matchInput.value })
+                        });
+                        matchResult.value = await res.json();
+                    } catch (e) {
+                        console.error('Match failed:', e);
+                    }
+                    matching.value = false;
+                }
+                
+                async function copyOptimizedPrompt() {
+                    if (matchResult.value?.optimized_prompt) {
+                        try {
+                            await navigator.clipboard.writeText(matchResult.value.optimized_prompt);
+                            alert('已复制!');
+                        } catch (e) {
+                            console.error('Copy failed:', e);
+                        }
+                    }
+                }
+                
+                async function submitTemplate() {
+                    if (!submitForm.value.title || !submitForm.value.prompt) return;
+                    submitting.value = true;
+                    try {
+                        await fetch(`${API_BASE}/api/templates/submit`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(submitForm.value)
+                        });
+                        submitSuccess.value = true;
+                        submitForm.value = { title: '', prompt: '', category: '', description: '' };
+                    } catch (e) {
+                        console.error('Submit failed:', e);
+                    }
+                    submitting.value = false;
+                }
+                
+                function handleHashChange() {
+                    const hash = window.location.hash.slice(1);
+                    if (hash.startsWith('edit/')) {
+                        const id = parseInt(hash.split('/')[1]);
+                        editTemplate(id);
+                    } else if (['home', 'match', 'submit'].includes(hash)) {
+                        currentPage.value = hash;
+                    } else {
+                        currentPage.value = 'home';
+                    }
+                }
+                
+                onMounted(() => {
+                    loadTemplates();
+                    loadCategories();
+                    handleHashChange();
+                    window.addEventListener('hashchange', handleHashChange);
+                });
+                
+                return {
+                    currentPage,
+                    templates,
+                    categories,
+                    selectedCategory,
+                    filteredTemplates,
+                    currentTemplate,
+                    editedPrompt,
+                    charCount,
+                    copySuccess,
+                    matchInput,
+                    matching,
+                    matchResult,
+                    submitting,
+                    submitSuccess,
+                    submitForm,
+                    navigate,
+                    selectCategory,
+                    editTemplate,
+                    updateCharCount,
+                    copyPrompt,
+                    doMatch,
+                    copyOptimizedPrompt,
+                    submitTemplate
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
