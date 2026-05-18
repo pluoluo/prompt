@@ -65,7 +65,7 @@ def get_template(template_id: int) -> Dict[str, Any]:
 
 @app.post("/api/match")
 async def match_template(request: MatchRequest) -> Dict[str, Any]:
-    from matching import match_prompt
+    from backend.matching import match_prompt
     
     templates = load_templates()
     categories = list(set(t.get("category", "Other") for t in templates))
@@ -109,6 +109,11 @@ def get_categories() -> List[str]:
     templates = load_templates()
     categories = sorted(set(t.get("category", "Other") for t in templates))
     return categories
+
+
+@app.get("/api/health")
+def health_check() -> Dict[str, str]:
+    return {"status": "ok", "service": "prompt-portal"}
 
 
 if __name__ == "__main__":

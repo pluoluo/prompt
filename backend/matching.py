@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 
 MINIMAX_API_KEY = os.environ.get("MINIMAX_API_KEY", "")
-MINIMAX_API_URL = "https://api.minimax.chat/v1/text/chatcompletion_pro"
+MINIMAX_API_URL = "https://api.minimaxi.com/anthropic/v1/messages"
 
 CATEGORIES = [
     "Photography & Realism",
@@ -72,13 +72,13 @@ Be precise and creative. The optimized prompt should combine the best elements f
 
     headers = {
         "Authorization": f"Bearer {MINIMAX_API_KEY}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "anthropic-version": "2023-06-01"
     }
     
     payload = {
-        "model": "MiniMax-Text-01",
+        "model": "MiniMax-M2.7",
         "messages": [
-            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
         "temperature": 0.7,
@@ -95,7 +95,8 @@ Be precise and creative. The optimized prompt should combine the best elements f
             response.raise_for_status()
             result = response.json()
             
-            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            # Anthropic-compatible response format
+            content = result.get("content", [{}])[0].get("text", "")
             
             json_start = content.find("{")
             json_end = content.rfind("}") + 1

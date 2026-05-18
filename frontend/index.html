@@ -19,58 +19,92 @@
             min-height: 100vh;
         }
         
+        /* Header */
+        .header {
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00d4ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-logo span {
+            color: #fff;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .header-nav-item {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #888;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .header-nav-item:hover {
+            color: #fff;
+            background: #252525;
+        }
+        
+        .header-nav-item.active {
+            color: #00d4ff;
+            background: #252525;
+        }
+        
         .app-container {
             display: flex;
-            min-height: 100vh;
+            min-height: calc(100vh - 60px);
         }
         
         /* Sidebar */
         .sidebar {
-            width: 260px;
+            width: 240px;
             background: #1a1a1a;
             border-right: 1px solid #333;
             padding: 20px 0;
             flex-shrink: 0;
         }
         
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            padding: 0 20px 20px;
-            border-bottom: 1px solid #333;
-            margin-bottom: 20px;
-            color: #00d4ff;
-        }
-        
-        .nav-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            color: #888;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-        
-        .nav-item:hover {
-            color: #fff;
-            background: #252525;
-        }
-        
-        .nav-item.active {
-            color: #00d4ff;
-            border-left-color: #00d4ff;
-            background: #252525;
-        }
-        
         .category-list {
             margin-top: 10px;
         }
         
+        .category-header {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
         .category-item {
-            padding: 10px 20px 10px 40px;
+            padding: 10px 20px 10px 30px;
             cursor: pointer;
             color: #666;
             font-size: 14px;
             transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .category-item:hover {
@@ -80,6 +114,15 @@
         
         .category-item.active {
             color: #00d4ff;
+            background: #252525;
+        }
+        
+        .category-count {
+            background: #333;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #888;
         }
         
         /* Main Content */
@@ -101,6 +144,11 @@
             font-weight: bold;
         }
         
+        .template-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
         .btn {
             padding: 10px 20px;
             border: none;
@@ -117,6 +165,12 @@
         
         .btn-primary:hover {
             background: #00b8e6;
+        }
+        
+        .btn-primary:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
         }
         
         .btn-secondary {
@@ -147,13 +201,21 @@
         .template-card:hover {
             border-color: #00d4ff;
             transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
         
         .card-title {
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 10px;
             color: #fff;
+            flex: 1;
         }
         
         .card-category {
@@ -163,7 +225,6 @@
             border-radius: 4px;
             font-size: 12px;
             color: #00d4ff;
-            margin-bottom: 10px;
         }
         
         .card-prompt {
@@ -174,12 +235,12 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         
         .card-meta {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
@@ -236,12 +297,6 @@
             font-size: 14px;
         }
         
-        .copy-success {
-            color: #00ff00;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-        
         /* Match Page */
         .match-container {
             max-width: 800px;
@@ -286,10 +341,15 @@
             margin-bottom: 20px;
         }
         
+        .result-section:last-child {
+            margin-bottom: 0;
+        }
+        
         .result-label {
             color: #00d4ff;
             font-size: 14px;
             margin-bottom: 10px;
+            font-weight: 500;
         }
         
         .result-content {
@@ -304,14 +364,112 @@
         }
         
         .matched-template {
-            padding: 12px;
+            padding: 12px 16px;
             background: #252525;
             border-radius: 6px;
             cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .matched-template:hover {
             background: #303030;
+        }
+        
+        .matched-template-title {
+            font-weight: 500;
+        }
+        
+        .matched-template-category {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Optimized Prompt Box */
+        .optimized-prompt-box {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1f2f 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .optimized-prompt-text {
+            color: #fff;
+            line-height: 1.8;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .copy-prompt-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        
+        .copy-prompt-btn:hover {
+            background: #00b8e6;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #00d4ff;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: #3a1a1a;
+            border: 1px solid #5a2a2a;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #ff6b6b;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #888;
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* Submit Page */
@@ -376,45 +534,90 @@
         
         /* Responsive */
         @media (max-width: 768px) {
+            .header {
+                padding: 0 15px;
+            }
+            
+            .header-nav {
+                display: none;
+            }
+            
             .app-container {
                 flex-direction: column;
             }
+            
             .sidebar {
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #333;
+                padding: 15px 0;
             }
+            
+            .category-item {
+                padding: 8px 15px 8px 20px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
             .template-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .editor-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .optimized-prompt-box {
+                padding: 15px;
+                padding-top: 50px;
             }
         }
     </style>
 </head>
 <body>
     <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-logo">
+                <span>⚡</span>
+                <span>Prompt Portal</span>
+            </div>
+            <nav class="header-nav">
+                <div class="header-nav-item" :class="{active: currentPage === 'home'}" @click="navigate('home')">
+                    模板库
+                </div>
+                <div class="header-nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
+                    AI 匹配
+                </div>
+                <div class="header-nav-item" :class="{active: currentPage === 'submit'}" @click="navigate('submit')">
+                    提交模板
+                </div>
+            </nav>
+        </header>
+        
         <div class="app-container">
             <!-- Sidebar -->
             <div class="sidebar">
-                <div class="logo">Prompt Portal</div>
-                <div class="nav-list">
-                    <div class="nav-item" :class="{active: currentPage === 'home'}" @click="navigate('home')">
-                        模板库
-                    </div>
-                    <div class="nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
-                        AI 智能匹配
-                    </div>
-                    <div class="nav-item" :class="{active: currentPage === 'submit'}" @click="navigate('submit')">
-                        提交模板
-                    </div>
-                </div>
-                
                 <div class="category-list" v-if="currentPage === 'home'">
+                    <div class="category-header">分类</div>
                     <div class="category-item" :class="{active: selectedCategory === ''}" @click="selectCategory('')">
-                        全部
+                        <span>全部</span>
+                        <span class="category-count">{{ templates.length }}</span>
                     </div>
                     <div class="category-item" v-for="cat in categories" :key="cat" 
                          :class="{active: selectedCategory === cat}" @click="selectCategory(cat)">
-                        {{ cat }}
+                        <span>{{ cat }}</span>
+                        <span class="category-count">{{ getCategoryCount(cat) }}</span>
                     </div>
                 </div>
             </div>
@@ -425,14 +628,16 @@
                 <div v-if="currentPage === 'home'">
                     <div class="page-header">
                         <h1 class="page-title">{{ selectedCategory || '全部模板' }}</h1>
-                        <span style="color: #666">{{ filteredTemplates.length }} 个模板</span>
+                        <span class="template-count">{{ filteredTemplates.length }} 个模板</span>
                     </div>
                     
                     <div class="template-grid" v-if="filteredTemplates.length">
                         <div class="template-card" v-for="tpl in filteredTemplates" :key="tpl.id"
                              @click="editTemplate(tpl.id)">
-                            <div class="card-title">{{ tpl.title }}</div>
-                            <span class="card-category">{{ tpl.category }}</span>
+                            <div class="card-header">
+                                <div class="card-title">{{ tpl.title }}</div>
+                                <span class="card-category">{{ tpl.category }}</span>
+                            </div>
                             <div class="card-prompt">{{ tpl.prompt }}</div>
                             <div class="card-meta">
                                 <span class="meta-tag" v-for="s in tpl.styles.slice(0,3)" :key="s">{{ s }}</span>
@@ -467,10 +672,9 @@
                         
                         <div class="editor-footer">
                             <span class="char-count">{{ charCount }} 字符</span>
-                            <div>
-                                <span v-if="copySuccess" class="copy-success">已复制!</span>
-                                <button class="btn btn-primary" @click="copyPrompt">一键复制</button>
-                            </div>
+                            <button class="btn btn-primary" @click="copyPrompt">
+                                {{ copySuccess ? '已复制!' : '一键复制' }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -489,8 +693,13 @@
                         </div>
                         
                         <button class="btn btn-primary" @click="doMatch" :disabled="matching || !matchInput.trim()">
+                            <span v-if="matching" class="loading-spinner"></span>
                             {{ matching ? '匹配中...' : '开始匹配' }}
                         </button>
+                        
+                        <div class="error-message" v-if="matchError">
+                            {{ matchError }}
+                        </div>
                         
                         <div class="match-result" v-if="matchResult">
                             <div class="result-section">
@@ -503,19 +712,24 @@
                                 <div class="matched-templates">
                                     <div class="matched-template" v-for="tpl in matchResult.matched_templates" 
                                          :key="tpl.id" @click="editTemplate(tpl.id)">
-                                        {{ tpl.title }} - {{ tpl.category }}
+                                        <div>
+                                            <div class="matched-template-title">{{ tpl.title }}</div>
+                                            <div class="matched-template-category">{{ tpl.category }}</div>
+                                        </div>
+                                        <span class="meta-tag">点击查看</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="result-section">
                                 <div class="result-label">优化后的 Prompt</div>
-                                <div class="result-content" style="white-space: pre-wrap;">{{ matchResult.optimized_prompt }}</div>
+                                <div class="optimized-prompt-box">
+                                    <div class="optimized-prompt-text">{{ matchResult.optimized_prompt }}</div>
+                                    <button class="copy-prompt-btn" @click="copyOptimizedPrompt">
+                                        {{ copyOptimizedSuccess ? '已复制!' : '复制' }}
+                                    </button>
+                                </div>
                             </div>
-                            
-                            <button class="btn btn-primary" @click="copyOptimizedPrompt" style="margin-top: 15px;">
-                                复制优化后的 Prompt
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -555,6 +769,7 @@
                         
                         <button class="btn btn-primary" @click="submitTemplate" 
                                 :disabled="submitting || !submitForm.title || !submitForm.prompt">
+                            <span v-if="submitting" class="loading-spinner"></span>
                             {{ submitting ? '提交中...' : '提交模板' }}
                         </button>
                         
@@ -565,10 +780,13 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Toast -->
+        <div class="toast" :class="{show: toast.show}">{{ toast.message }}</div>
     </div>
     
     <script>
-        const { createApp, ref, computed, onMounted, watch } = Vue;
+        const { createApp, ref, computed, onMounted } = Vue;
         
         const API_BASE = 'http://localhost:8768';
         
@@ -585,8 +803,12 @@
                 const matchInput = ref('');
                 const matching = ref(false);
                 const matchResult = ref(null);
+                const matchError = ref(null);
+                const copyOptimizedSuccess = ref(false);
                 const submitting = ref(false);
                 const submitSuccess = ref(false);
+                
+                const toast = ref({ show: false, message: '' });
                 
                 const submitForm = ref({
                     title: '',
@@ -599,6 +821,13 @@
                     if (!selectedCategory.value) return templates.value;
                     return templates.value.filter(t => t.category === selectedCategory.value);
                 });
+                
+                function showToast(message) {
+                    toast.value = { show: true, message };
+                    setTimeout(() => {
+                        toast.value.show = false;
+                    }, 2000);
+                }
                 
                 async function loadTemplates() {
                     try {
@@ -620,9 +849,14 @@
                     }
                 }
                 
+                function getCategoryCount(cat) {
+                    return templates.value.filter(t => t.category === cat).length;
+                }
+                
                 function navigate(page) {
                     currentPage.value = page;
                     matchResult.value = null;
+                    matchError.value = null;
                     submitSuccess.value = false;
                     window.location.hash = page;
                 }
@@ -652,6 +886,7 @@
                     try {
                         await navigator.clipboard.writeText(editedPrompt.value);
                         copySuccess.value = true;
+                        showToast('已复制!');
                         setTimeout(() => copySuccess.value = false, 2000);
                     } catch (e) {
                         console.error('Copy failed:', e);
@@ -661,15 +896,21 @@
                 async function doMatch() {
                     if (!matchInput.value.trim()) return;
                     matching.value = true;
+                    matchError.value = null;
+                    matchResult.value = null;
                     try {
                         const res = await fetch(`${API_BASE}/api/match`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ user_input: matchInput.value })
                         });
+                        if (!res.ok) {
+                            throw new Error(`API error: ${res.status}`);
+                        }
                         matchResult.value = await res.json();
                     } catch (e) {
                         console.error('Match failed:', e);
+                        matchError.value = '匹配失败，请稍后重试或使用关键词搜索。';
                     }
                     matching.value = false;
                 }
@@ -678,7 +919,9 @@
                     if (matchResult.value?.optimized_prompt) {
                         try {
                             await navigator.clipboard.writeText(matchResult.value.optimized_prompt);
-                            alert('已复制!');
+                            copyOptimizedSuccess.value = true;
+                            showToast('已复制!');
+                            setTimeout(() => copyOptimizedSuccess.value = false, 2000);
                         } catch (e) {
                             console.error('Copy failed:', e);
                         }
@@ -695,6 +938,7 @@
                             body: JSON.stringify(submitForm.value)
                         });
                         submitSuccess.value = true;
+                        showToast('提交成功!');
                         submitForm.value = { title: '', prompt: '', category: '', description: '' };
                     } catch (e) {
                         console.error('Submit failed:', e);
@@ -734,9 +978,13 @@
                     matchInput,
                     matching,
                     matchResult,
+                    matchError,
+                    copyOptimizedSuccess,
                     submitting,
                     submitSuccess,
                     submitForm,
+                    toast,
+                    getCategoryCount,
                     navigate,
                     selectCategory,
                     editTemplate,
