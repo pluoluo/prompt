@@ -177,9 +177,228 @@
             background: #333;
             color: #fff;
         }
-        
+
         .btn-secondary:hover {
             background: #444;
+        }
+
+        .btn-danger {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #5a2020;
+            color: #ff6b6b;
+            border: 1px solid #8a3030;
+        }
+
+        .btn-danger:hover {
+            background: #6a2828;
+        }
+
+        .btn-danger:disabled {
+            background: #333;
+            color: #666;
+            border-color: #444;
+            cursor: not-allowed;
+        }
+
+        /* Search & Filter */
+        .search-filter-bar {
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .search-input::placeholder {
+            color: #555;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: #666;
+            margin-right: 2px;
+        }
+
+        .filter-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: #252525;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .filter-tag:hover {
+            color: #fff;
+            background: #333;
+        }
+
+        .filter-tag.active {
+            background: #003344;
+            color: #00d4ff;
+            border-color: #00d4ff55;
+        }
+
+        .filter-tag.clear {
+            background: transparent;
+            color: #ff6b6b;
+            border: 1px dashed #5a2a2a;
+            margin-left: 8px;
+        }
+
+        .filter-tag.clear:hover {
+            background: #2a1a1a;
+            border-color: #ff6b6b55;
+        }
+
+        .meta-tag.scene-tag {
+            color: #8b8;
+        }
+
+        /* Delete Confirm */
+        .delete-confirm {
+            background: #2a1a1a;
+            border: 1px solid #5a2a2a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .delete-confirm p {
+            color: #ffaaaa;
+            font-size: 14px;
+        }
+
+        /* Tag Selector */
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tag-chip {
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 12px;
+            background: #252525;
+            color: #888;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .tag-chip:hover {
+            color: #fff;
+            background: #333;
+        }
+
+        .tag-chip.active {
+            background: #003344;
+            color: #00d4ff;
+            border-color: #00d4ff55;
+        }
+
+        .tag-chip.custom {
+            background: #1a2a2a;
+            color: #6bcb77;
+            border-color: #2a5a2a;
+        }
+
+        .tag-chip.custom i {
+            font-style: normal;
+            margin-left: 4px;
+            color: #ff6b6b;
+            cursor: pointer;
+        }
+
+        .tag-input {
+            flex: 1;
+            min-width: 140px;
+            padding: 6px 10px;
+            background: transparent;
+            border: 1px dashed #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .tag-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            border-style: solid;
+        }
+
+        .tag-input::placeholder {
+            color: #444;
+        }
+
+        /* Conversation */
+        .conversation {
+            margin-bottom: 20px;
+        }
+
+        .conv-turn {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #222;
+        }
+
+        .conv-turn:last-child {
+            border-bottom: none;
+        }
+
+        .conv-user, .conv-ai {
+            margin-bottom: 12px;
+        }
+
+        .conv-role {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .conv-user .conv-role {
+            color: #6bcb77;
+        }
+
+        .conv-ai .conv-role {
+            color: #00d4ff;
+        }
+
+        .conv-text {
+            color: #bbb;
+            line-height: 1.6;
+            font-size: 14px;
         }
         
         /* Template Grid */
@@ -299,7 +518,17 @@
         
         /* Match Page */
         .match-container {
-            max-width: 800px;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .template-ref-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-left: 3px solid #00d4ff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
         }
         
         .match-input-section {
@@ -532,6 +761,160 @@
             color: #666;
         }
         
+        /* Guide Page */
+        .guide-container {
+            max-width: 900px;
+        }
+
+        .guide-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #222;
+        }
+
+        .guide-section:last-child {
+            border-bottom: none;
+        }
+
+        .guide-h2 {
+            font-size: 20px;
+            color: #00d4ff;
+            margin-bottom: 14px;
+        }
+
+        .guide-p {
+            color: #bbb;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .guide-ul, .guide-ol {
+            color: #bbb;
+            line-height: 1.9;
+            padding-left: 18px;
+            font-size: 14px;
+        }
+
+        .guide-ul li, .guide-ol li {
+            margin-bottom: 6px;
+        }
+
+        .guide-code-block {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            font-size: 15px;
+            text-align: center;
+            color: #ddd;
+        }
+
+        .guide-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tag-subject { background: #ff6b6b33; color: #ff6b6b; border: 1px solid #ff6b6b55; }
+        .tag-scene { background: #ffd93d33; color: #ffd93d; border: 1px solid #ffd93d55; }
+        .tag-style { background: #6bcb7733; color: #6bcb77; border: 1px solid #6bcb7755; }
+        .tag-detail { background: #4d96ff33; color: #4d96ff; border: 1px solid #4d96ff55; }
+        .tag-tech { background: #9b59b633; color: #9b59b6; border: 1px solid #9b59b655; }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .guide-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .guide-card h3 {
+            font-size: 14px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .guide-card.bad {
+            border-color: #5a2a2a;
+        }
+
+        .guide-card.bad h3 {
+            color: #ff6b6b;
+        }
+
+        .guide-card.good {
+            border-color: #2a5a2a;
+        }
+
+        .guide-card.good h3 {
+            color: #6bcb77;
+        }
+
+        .guide-code {
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .bg-bad {
+            background: #2a1a1a;
+        }
+
+        .bg-good {
+            background: #1a2a1a;
+        }
+
+        .guide-card-hint {
+            color: #888;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .guide-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .guide-table th {
+            background: #252525;
+            padding: 10px 14px;
+            text-align: left;
+            color: #00d4ff;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+        }
+
+        .guide-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #222;
+            color: #bbb;
+        }
+
+        .guide-table code {
+            background: #252525;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #00d4ff;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header {
@@ -581,6 +964,10 @@
                 padding: 15px;
                 padding-top: 50px;
             }
+
+            .guide-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -597,10 +984,13 @@
                     模板库
                 </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
-                    AI 匹配
+                    AI 优化生成
                 </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'submit'}" @click="navigate('submit')">
                     提交模板
+                </div>
+                <div class="header-nav-item" :class="{active: currentPage === 'guide'}" @click="navigate('guide')">
+                    编写指南
                 </div>
             </nav>
         </header>
@@ -608,16 +998,25 @@
         <div class="app-container">
             <!-- Sidebar -->
             <div class="sidebar">
-                <div class="category-list" v-if="currentPage === 'home'">
+                <div class="category-list" v-if="currentPage === 'home' || currentPage === 'edit'">
                     <div class="category-header">分类</div>
                     <div class="category-item" :class="{active: selectedCategory === ''}" @click="selectCategory('')">
                         <span>全部</span>
                         <span class="category-count">{{ templates.length }}</span>
                     </div>
-                    <div class="category-item" v-for="cat in categories" :key="cat" 
+                    <div class="category-item" v-for="cat in categories" :key="cat"
                          :class="{active: selectedCategory === cat}" @click="selectCategory(cat)">
                         <span>{{ cat }}</span>
                         <span class="category-count">{{ getCategoryCount(cat) }}</span>
+                    </div>
+                </div>
+                <div class="category-list" v-if="currentPage === 'guide'">
+                    <div class="category-header">指南版本</div>
+                    <div class="category-item" :class="{active: selectedGuide === 'gpt-image-2'}" @click="selectedGuide = 'gpt-image-2'">
+                        <span>GPT Image 2 官方指南</span>
+                    </div>
+                    <div class="category-item" :class="{active: selectedGuide === 'general'}" @click="selectedGuide = 'general'">
+                        <span>通用提示词指南</span>
                     </div>
                 </div>
             </div>
@@ -630,7 +1029,25 @@
                         <h1 class="page-title">{{ selectedCategory || '全部模板' }}</h1>
                         <span class="template-count">{{ filteredTemplates.length }} 个模板</span>
                     </div>
-                    
+
+                    <!-- Search & Filter Bar -->
+                    <div class="search-filter-bar">
+                        <input type="text" class="search-input" v-model="searchQuery"
+                               placeholder="搜索标题或 Prompt 关键词...">
+                        <div class="filter-tags" v-if="allStyles.length || allScenes.length">
+                            <span class="filter-label">风格:</span>
+                            <span class="filter-tag" v-for="s in allStyles" :key="s"
+                                  :class="{active: selectedStyles.includes(s)}"
+                                  @click="toggleStyle(s)">{{ s }}</span>
+                            <span class="filter-label" style="margin-left:8px;">场景:</span>
+                            <span class="filter-tag" v-for="sc in allScenes" :key="sc"
+                                  :class="{active: selectedScenes.includes(sc)}"
+                                  @click="toggleScene(sc)">{{ sc }}</span>
+                            <span class="filter-tag clear" v-if="selectedStyles.length || selectedScenes.length || searchQuery"
+                                  @click="clearFilters">清除筛选</span>
+                        </div>
+                    </div>
+
                     <div class="template-grid" v-if="filteredTemplates.length">
                         <div class="template-card" v-for="tpl in filteredTemplates" :key="tpl.id"
                              @click="editTemplate(tpl.id)">
@@ -638,16 +1055,19 @@
                                 <div class="card-title">{{ tpl.title }}</div>
                                 <span class="card-category">{{ tpl.category }}</span>
                             </div>
-                            <div class="card-prompt">{{ tpl.prompt }}</div>
+                            <div class="card-prompt">{{ tpl.prompt.substring(0, 120) }}{{ tpl.prompt.length > 120 ? '...' : '' }}</div>
                             <div class="card-meta">
-                                <span class="meta-tag" v-for="s in tpl.styles.slice(0,3)" :key="s">{{ s }}</span>
-                                <span class="meta-tag" v-for="sc in tpl.scenes.slice(0,2)" :key="sc">{{ sc }}</span>
+                                <span class="meta-tag" v-for="s in tpl.styles.slice(0,4)" :key="s">{{ s }}</span>
+                                <span class="meta-tag scene-tag" v-for="sc in tpl.scenes.slice(0,3)" :key="sc">{{ sc }}</span>
                             </div>
                         </div>
                     </div>
-                    
+
+                    <div class="empty-state" v-else-if="!templates.length">
+                        <p>加载中...</p>
+                    </div>
                     <div class="empty-state" v-else>
-                        <p>暂无模板</p>
+                        <p>没有匹配的模板</p>
                     </div>
                 </div>
                 
@@ -658,23 +1078,133 @@
                             <button class="btn btn-secondary" @click="navigate('home')" style="margin-bottom: 15px;">
                                 ← 返回列表
                             </button>
-                            <h1 class="template-title">{{ currentTemplate?.title || '模板编辑' }}</h1>
-                            <span class="card-category">{{ currentTemplate?.category }}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h1 class="template-title" style="margin:0;">{{ isEditing ? '编辑模板' : '模板详情' }} #{{ currentTemplate?.id }}</h1>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="btn btn-primary" @click="useTemplateInAI" v-if="!showDeleteConfirm">
+                                        使用模板 → AI 生成
+                                    </button>
+                                    <button v-if="!isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="startEditing">
+                                        编辑模板
+                                    </button>
+                                    <button v-if="isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="isEditing = false">
+                                        取消编辑
+                                    </button>
+                                    <button class="btn btn-danger" @click="showDeleteConfirm = true" v-if="!showDeleteConfirm && isEditing">
+                                        删除模板
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="result-section" v-if="currentTemplate?.description">
-                            <div class="result-label">中文说明</div>
-                            <div class="result-content">{{ currentTemplate.description }}</div>
+
+                        <!-- Delete Confirmation -->
+                        <div class="delete-confirm" v-if="showDeleteConfirm">
+                            <p>确定要删除模板 <strong>#{{ currentTemplate?.id }} {{ currentTemplate?.title }}</strong> 吗？此操作不可撤销。</p>
+                            <div style="display:flex; gap:10px; margin-top:12px;">
+                                <button class="btn btn-danger" @click="deleteTemplate" :disabled="deleting">
+                                    {{ deleting ? '删除中...' : '确认删除' }}
+                                </button>
+                                <button class="btn btn-secondary" @click="showDeleteConfirm = false">取消</button>
+                            </div>
                         </div>
-                        
-                        <textarea class="prompt-textarea" v-model="editedPrompt" 
-                                  @input="updateCharCount"></textarea>
-                        
-                        <div class="editor-footer">
-                            <span class="char-count">{{ charCount }} 字符</span>
-                            <button class="btn btn-primary" @click="copyPrompt">
-                                {{ copySuccess ? '已复制!' : '一键复制' }}
-                            </button>
+
+                        <!-- Read-only Detail View -->
+                        <template v-if="!isEditing">
+                            <div style="margin-bottom:20px;">
+                                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                                    <span class="card-category">{{ editForm.category }}</span>
+                                    <span v-for="s in editStyles" :key="s" class="meta-tag">{{ s }}</span>
+                                    <span v-for="sc in editScenes" :key="sc" class="meta-tag scene-tag">{{ sc }}</span>
+                                </div>
+                                <div style="font-size:13px;color:#888;margin-bottom:8px;">{{ editForm.title }}</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" style="margin-bottom:8px;">Prompt 内容</label>
+                                <div style="background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:20px;color:#ccc;font-size:14px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;">{{ editForm.prompt }}</div>
+                            </div>
+
+                            <div class="form-group" v-if="editForm.description">
+                                <label class="form-label" style="margin-bottom:8px;">中文说明</label>
+                                <div style="color:#888;font-size:14px;line-height:1.6;">{{ editForm.description }}</div>
+                            </div>
+
+                            <div style="margin-top:20px;">
+                                <button class="btn btn-secondary" @click="copyPrompt">
+                                    {{ copySuccess ? '已复制!' : '复制 Prompt' }}
+                                </button>
+                            </div>
+                        </template>
+
+                        <!-- Edit Mode Form -->
+                        <template v-else>
+                            <div class="form-group">
+                                <label class="form-label">标题</label>
+                                <input type="text" class="form-input" v-model="editForm.title">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">分类</label>
+                                <select class="form-select" v-model="editForm.category">
+                                    <option v-for="cat in allCategories" :key="cat" :value="cat">{{ cat }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Prompt 内容</label>
+                                <textarea class="prompt-textarea" v-model="editForm.prompt"
+                                          @input="updateCharCount"></textarea>
+                                <span class="char-count">{{ charCount }} 字符</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">风格标签</label>
+                                <div class="tag-selector">
+                                    <span class="tag-chip" v-for="s in allStyles" :key="'ed-s-'+s"
+                                          :class="{active: editStyles.includes(s)}"
+                                          @click="toggleEditStyle(s)">{{ s }}</span>
+                                    <span class="tag-chip custom" v-for="s in editStyles" :key="'ed-sc-'+s"
+                                          v-if="!allStyles.includes(s)"
+                                          :class="{active: true}">{{ s }} <i @click.stop="removeEditStyle(s)">x</i></span>
+                                    <input type="text" class="tag-input" v-model="newEditStyle"
+                                           placeholder="输入新风格标签"
+                                           @keydown.enter.prevent="addEditStyle()">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">场景标签</label>
+                                <div class="tag-selector">
+                                    <span class="tag-chip" v-for="sc in allScenes" :key="'ed-sc-'+sc"
+                                          :class="{active: editScenes.includes(sc)}"
+                                          @click="toggleEditScene(sc)">{{ sc }}</span>
+                                    <span class="tag-chip custom" v-for="sc in editScenes" :key="'ed-scc-'+sc"
+                                          v-if="!allScenes.includes(sc)"
+                                          :class="{active: true}">{{ sc }} <i @click.stop="removeEditScene(sc)">x</i></span>
+                                    <input type="text" class="tag-input" v-model="newEditScene"
+                                           placeholder="输入新场景标签"
+                                           @keydown.enter.prevent="addEditScene()">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">中文说明</label>
+                                <textarea class="form-textarea" v-model="editForm.description"
+                                          placeholder="描述这个模板的用途和特点..." style="height: 100px;"></textarea>
+                            </div>
+
+                            <div class="editor-footer">
+                                <button class="btn btn-primary" @click="saveTemplate" :disabled="saving">
+                                    {{ saving ? '保存中...' : '保存修改' }}
+                                </button>
+                                <button class="btn btn-secondary" @click="copyPrompt">
+                                    {{ copySuccess ? '已复制!' : '复制 Prompt' }}
+                                </button>
+                            </div>
+                        </template>
+
+                        <div class="submit-success" v-if="saveSuccess" style="margin-top:12px;">
+                            保存成功！
                         </div>
                     </div>
                 </div>
@@ -683,53 +1213,96 @@
                 <div v-if="currentPage === 'match'">
                     <div class="match-container">
                         <div class="page-header">
-                            <h1 class="page-title">AI 智能匹配</h1>
+                            <h1 class="page-title">AI 优化生成</h1>
+                            <span class="template-count" v-if="templateRefForAI">
+                                参考模板：{{ templateRefForAI.title }}
+                                <span @click="templateRefForAI = null" style="color:#ff6b6b; cursor:pointer; margin-left:8px;">取消</span>
+                            </span>
+                            <span class="template-count" v-else>用AI直接生成或优化你的中文提示词，支持多轮对话修改</span>
                         </div>
-                        
-                        <div class="match-input-section">
-                            <textarea class="match-textarea" v-model="matchInput" 
-                                      placeholder="描述你想要的效果，例如：我要一张科技感的海报，有赛博朋克风格..."></textarea>
-                            <div class="match-hint">用中文或英文描述你的需求，AI会帮你找到最匹配的模板并优化</div>
-                        </div>
-                        
-                        <button class="btn btn-primary" @click="doMatch" :disabled="matching || !matchInput.trim()">
-                            <span v-if="matching" class="loading-spinner"></span>
-                            {{ matching ? '匹配中...' : '开始匹配' }}
-                        </button>
-                        
-                        <div class="error-message" v-if="matchError">
-                            {{ matchError }}
-                        </div>
-                        
-                        <div class="match-result" v-if="matchResult">
-                            <div class="result-section">
-                                <div class="result-label">匹配理由</div>
-                                <div class="result-content">{{ matchResult.reason }}</div>
+
+                        <!-- Referenced Template Info Card -->
+                        <div class="template-ref-card" v-if="templateRefForAI">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <span class="card-category" style="margin-right:8px;">{{ templateRefForAI.category }}</span>
+                                    <span class="meta-tag" v-for="s in templateRefForAI.styles" :key="'ref-s-'+s">{{ s }}</span>
+                                    <span class="meta-tag scene-tag" v-for="sc in templateRefForAI.scenes" :key="'ref-sc-'+sc">{{ sc }}</span>
+                                </div>
                             </div>
-                            
-                            <div class="result-section">
-                                <div class="result-label">匹配的模板</div>
-                                <div class="matched-templates">
-                                    <div class="matched-template" v-for="tpl in matchResult.matched_templates" 
-                                         :key="tpl.id" @click="editTemplate(tpl.id)">
-                                        <div>
-                                            <div class="matched-template-title">{{ tpl.title }}</div>
-                                            <div class="matched-template-category">{{ tpl.category }}</div>
+                            <div style="margin-top: 12px; font-size: 13px; color: #888; white-space: pre-wrap; line-height: 1.6; max-height: 200px; overflow-y: auto;">
+                                {{ templateRefForAI.prompt }}
+                            </div>
+                            <div style="margin-top: 8px; font-size: 11px; color: #00d4ff;">AI 将基于此模板的风格和结构生成 Prompt，不再匹配其他模板</div>
+                        </div>
+
+                        <!-- Conversation History -->
+                        <div class="conversation" v-if="conversation.length">
+                            <div class="conv-turn" v-for="(turn, idx) in conversation" :key="idx">
+                                <div class="conv-user">
+                                    <div class="conv-role">你</div>
+                                    <div class="conv-text">{{ turn.userInput }}</div>
+                                </div>
+                                <div class="conv-ai">
+                                    <div class="conv-role">AI</div>
+                                    <div class="conv-text">
+                                        <div class="result-section" v-if="turn.result?.reason">
+                                            <div class="result-label">匹配理由</div>
+                                            <div class="result-content">{{ turn.result.reason }}</div>
                                         </div>
-                                        <span class="meta-tag">点击查看</span>
+                                        <div class="result-section" v-if="turn.result?.matched_templates?.length">
+                                            <div class="result-label">参考模板</div>
+                                            <div class="matched-templates" style="margin-top:6px;">
+                                                <div class="matched-template" v-for="tpl in turn.result.matched_templates"
+                                                     :key="tpl.id" @click="useMatchedTemplate(tpl)">
+                                                    <div>
+                                                        <div class="matched-template-title">{{ tpl.title }}</div>
+                                                        <div class="matched-template-category">{{ tpl.category }}</div>
+                                                    </div>
+                                                    <span class="meta-tag" style="color:#00d4ff;border:1px solid #00d4ff;">使用此模板</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="result-section" v-if="turn.result?.optimized_prompt" style="margin-top:12px;">
+                                            <div class="result-label">AI 生成的中文 Prompt</div>
+                                            <div class="optimized-prompt-box" style="margin-top:6px;">
+                                                <div class="optimized-prompt-text">{{ turn.result.optimized_prompt }}</div>
+                                                <button class="copy-prompt-btn" @click="copyConvPrompt(turn.result.optimized_prompt)">
+                                                    复制
+                                                </button>
+                                                <button class="copy-prompt-btn" style="right:80px;background:#6bcb77;" @click="generateImage(turn.result.optimized_prompt)">
+                                                    🎨 生成图像
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="result-section">
-                                <div class="result-label">优化后的 Prompt</div>
-                                <div class="optimized-prompt-box">
-                                    <div class="optimized-prompt-text">{{ matchResult.optimized_prompt }}</div>
-                                    <button class="copy-prompt-btn" @click="copyOptimizedPrompt">
-                                        {{ copyOptimizedSuccess ? '已复制!' : '复制' }}
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
+
+                        <div class="error-message" v-if="matchError">
+                            {{ matchError }}
+                        </div>
+
+                        <!-- Input area for next turn -->
+                        <div class="match-input-section" style="margin-top:20px;">
+                            <textarea class="match-textarea" v-model="matchInput"
+                                      :placeholder="conversation.length ? '继续描述你的修改需求，例如：把背景改成夜晚、换一个暖色调...' : '描述你想要的画面效果，例如：一只橘猫坐在窗台上，窗外是下雨的街道，温暖的室内灯光，治愈系插画风格...'"
+                                      @keydown.ctrl.enter="doMatch"></textarea>
+                            <div class="match-hint">用中文描述需求，Ctrl+Enter 快速发送。支持多轮对话：AI 会记住上下文，你可以逐步修改优化</div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <button class="btn btn-primary" @click="doMatch" :disabled="matching || !matchInput.trim()">
+                                <span v-if="matching" class="loading-spinner"></span>
+                                {{ matching ? 'AI 思考中...' : (conversation.length ? '继续修改' : '开始生成') }}
+                            </button>
+                            <button class="btn btn-secondary" v-if="matchInput.trim()" @click="generateImage(matchInput.trim())">
+                                🎨 生成图像
+                            </button>
+                            <button class="btn btn-secondary" v-if="conversation.length" @click="resetConversation">
+                                重新开始
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -756,25 +1329,378 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Prompt 内容（英文）</label>
+                            <label class="form-label">Prompt 内容</label>
                             <textarea class="form-textarea" v-model="submitForm.prompt"
-                                      placeholder="输入英文 Prompt..."></textarea>
+                                      placeholder="输入 Prompt..."></textarea>
                         </div>
-                        
+
+                        <div class="form-group">
+                            <label class="form-label">风格标签（点击选择，也可输入新标签）</label>
+                            <div class="tag-selector">
+                                <span class="tag-chip" v-for="s in allStyles" :key="'sub-s-'+s"
+                                      :class="{active: submitStyles.includes(s)}"
+                                      @click="toggleSubmitStyle(s)">{{ s }}</span>
+                                <span class="tag-chip custom" v-for="s in submitStyles" :key="'sub-sc-'+s"
+                                      v-if="!allStyles.includes(s)"
+                                      :class="{active: true}">{{ s }} <i @click.stop="removeSubmitStyle(s)">x</i></span>
+                                <input type="text" class="tag-input" v-model="newSubmitStyle"
+                                       placeholder="输入新风格标签"
+                                       @keydown.enter.prevent="addSubmitStyle()">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">场景标签（点击选择，也可输入新标签）</label>
+                            <div class="tag-selector">
+                                <span class="tag-chip" v-for="sc in allScenes" :key="'sub-sc-'+sc"
+                                      :class="{active: submitScenes.includes(sc)}"
+                                      @click="toggleSubmitScene(sc)">{{ sc }}</span>
+                                <span class="tag-chip custom" v-for="sc in submitScenes" :key="'sub-scc-'+sc"
+                                      v-if="!allScenes.includes(sc)"
+                                      :class="{active: true}">{{ sc }} <i @click.stop="removeSubmitScene(sc)">x</i></span>
+                                <input type="text" class="tag-input" v-model="newSubmitScene"
+                                       placeholder="输入新场景标签"
+                                       @keydown.enter.prevent="addSubmitScene()">
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label">中文说明（可选）</label>
                             <textarea class="form-textarea" v-model="submitForm.description"
                                       placeholder="描述这个模板的用途和特点..." style="height: 100px;"></textarea>
                         </div>
                         
-                        <button class="btn btn-primary" @click="submitTemplate" 
-                                :disabled="submitting || !submitForm.title || !submitForm.prompt">
+                        <div class="error-message" v-if="submitError" style="margin-bottom:12px;">
+                            {{ submitError }}
+                        </div>
+
+                        <button class="btn btn-primary" @click="submitTemplate"
+                                :disabled="submitting">
                             <span v-if="submitting" class="loading-spinner"></span>
                             {{ submitting ? '提交中...' : '提交模板' }}
                         </button>
                         
                         <div class="submit-success" v-if="submitSuccess">
                             模板提交成功！等待审核。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guide Page -->
+                <div v-if="currentPage === 'guide'">
+                    <!-- GPT Image 2 Official Guide -->
+                    <div class="guide-container" v-if="selectedGuide === 'gpt-image-2'">
+                        <div class="page-header">
+                            <h1 class="page-title">GPT Image 2 提示词编写指南</h1>
+                            <span class="template-count">来源：<a href="https://veo4.im/zh/blog/how-to-use-gpt-image-2" target="_blank" style="color:#00d4ff;">veo4.im</a></span>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">核心流程</h2>
+                            <p class="guide-p">想把 GPT Image 2 用好，要把它当成一个设计执行器，而不是魔法按钮。最实用的默认流程如下：</p>
+                            <div class="guide-table-wrapper">
+                                <table class="guide-table">
+                                    <thead>
+                                        <tr><th>步骤</th><th>先决定什么</th><th>默认建议</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1</td><td>输出类型</td><td>海报、产品视觉、信息图、UI 板、肖像或广告素材</td></tr>
+                                        <tr><td>2</td><td>工作模式</td><td>新场景用生成；已有底图接近时优先编辑</td></tr>
+                                        <tr><td>3</td><td>提示词结构</td><td>主体 → 版式 → 风格 → 光线 → 文字 → 投放渠道</td></tr>
+                                        <tr><td>4</td><td>成功标准</td><td>可读性、构图、真实感、品牌匹配度</td></tr>
+                                        <tr><td>5</td><td>修改方式</td><td>每轮只修一类问题，不要整段重写</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">一、先定义任务，再写 Prompt</h2>
+                            <p class="guide-p">不要一开始就写 <code>beautiful</code>、<code>epic</code>、<code>stunning</code> 这种空泛词。先问自己：这张图到底要完成什么工作？</p>
+                            <div class="guide-table-wrapper">
+                                <table class="guide-table">
+                                    <thead>
+                                        <tr><th>目标</th><th>最合适的起手方式</th><th>为什么</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>社媒广告或海报</td><td>以文字层级为核心的版式任务说明</td><td>标题层级和风格同样重要</td></tr>
+                                        <tr><td>信息图或解释图</td><td>先定义标签结构的解释图任务说明</td><td>结构先清楚，才能避免装饰化废图</td></tr>
+                                        <tr><td>产品主视觉图</td><td>写实产品场景任务说明</td><td>表面材质、角度和光线决定质量</td></tr>
+                                        <tr><td>UI 板或设计概念</td><td>模块化布局任务说明</td><td>面板、间距、层次需要显式约束</td></tr>
+                                        <tr><td>人像或生活方式</td><td>主体优先的电影感任务说明</td><td>身份和光线应该比风格词更靠前</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">二、结构化 Prompt 模板</h2>
+                            <p class="guide-p">最稳定的提示词，靠的是结构，不是灵感。按以下顺序写：</p>
+                            <div class="guide-table-wrapper">
+                                <table class="guide-table">
+                                    <thead>
+                                        <tr><th>模块</th><th>需要写什么</th><th>示例</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>输出类型</td><td>海报、信息图、产品渲染、肖像、UI 板</td><td><code>Create a launch poster</code></td></tr>
+                                        <tr><td>主体</td><td>核心对象、人物或场景</td><td><code>for a minimalist AI design studio</code></td></tr>
+                                        <tr><td>构图</td><td>取景、层级、留白、角度</td><td><code>centered layout with large headline space</code></td></tr>
+                                        <tr><td>风格</td><td>编辑型、写实、插画风等</td><td><code>clean editorial design</code></td></tr>
+                                        <tr><td>光线与材质</td><td>光向、质感、表面、真实感</td><td><code>soft side light, matte glass, subtle reflections</code></td></tr>
+                                        <tr><td>图中文字</td><td>必须出现的精确文案</td><td><code>"Design Faster with Better Control"</code></td></tr>
+                                        <tr><td>使用场景</td><td>落地页、广告、博客头图、演示文稿</td><td><code>for a landing-page hero</code></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="guide-p" style="margin-top: 14px;"><strong>可直接套用的模板：</strong></p>
+                            <div class="guide-code bg-good" style="font-family: Monaco, Menlo, monospace; white-space: pre-wrap;">
+Create a [output type] featuring [main subject].
+Use [composition and framing].
+The style should feel [style direction].
+Lighting and materials: [light, texture, surfaces].
+Visible text: "[exact text]".
+Make it suitable for [delivery context].
+Avoid clutter, unreadable text, extra objects, and off-brand colors.
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">三、生成 vs 编辑</h2>
+                            <p class="guide-p">很多团队浪费时间，是因为本该编辑的时候还在不断重生成。</p>
+                            <div class="guide-table-wrapper">
+                                <table class="guide-table">
+                                    <thead>
+                                        <tr><th>模式</th><th>适合什么情况</th><th>常见用途</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td><strong>生成</strong></td><td>需要新场景、新布局、新方向</td><td>首轮概念图、海报初稿、全新产品视觉</td></tr>
+                                        <tr><td><strong>编辑</strong></td><td>底图大体正确，只差局部修正</td><td>改文字、换对象细节、调色、简化版式</td></tr>
+                                        <tr><td><strong>复审后重生成</strong></td><td>整个概念都错了</td><td>视角错误、主体错误、层级崩坏</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="guide-p">简单说：<strong>思路对了但细节错了，就编辑；思路都错了，再重生成。</strong></p>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">四、三类核心场景</h2>
+                            <div class="guide-grid">
+                                <div class="guide-card">
+                                    <h3>1. 海报与广告版式</h3>
+                                    <ul class="guide-ul">
+                                        <li>先把主标题定稿，图中只放一行主标题 + 可选副标题</li>
+                                        <li>写清文字位置和留白区域</li>
+                                        <li>明确投放渠道（社交广告、落地页 Hero 等）</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-card">
+                                    <h3>2. 信息图与解释图</h3>
+                                    <ul class="guide-ul">
+                                        <li>结构比"炫"更重要</li>
+                                        <li>明确：几个标注区、是否要箭头/分区/编号</li>
+                                        <li>像信息设计师一样思考，而非概念画师</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="guide-grid" style="margin-top: 16px;">
+                                <div class="guide-card">
+                                    <h3>3. 产品视觉与品牌画面</h3>
+                                    <ul class="guide-ul">
+                                        <li>镜头角度、表面材质、主光方向</li>
+                                        <li>反射状态、背景复杂度、最终投放渠道</li>
+                                        <li>这些约束把"普通产品图"推向"可用主视觉图"</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-card">
+                                    <h3>海报 Prompt 示例</h3>
+                                    <div class="guide-code bg-good" style="font-size:12px; font-family: Monaco, Menlo, monospace; white-space: pre-wrap;">Create a clean campaign poster for an AI design tool.
+Centered editorial layout with one product object and generous whitespace.
+Headline at the top: "Design Faster with Better Control".
+Small subheading below: "Prompt, edit, and export in one workflow".
+Soft gray background, silver-blue accents, premium modern typography.
+Make it suitable for a social ad and a landing-page hero crop.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">五、审图清单</h2>
+                            <p class="guide-p">第一张图不是终点，而是最快的诊断节点。至少检查：</p>
+                            <ul class="guide-ul">
+                                <li>计划发布尺寸下，<strong>文字真的清楚</strong>吗？</li>
+                                <li>视觉焦点是不是先落到正确主体？</li>
+                                <li>背景是在帮你表达，还是在抢注意力？</li>
+                                <li>光线与材质是否符合品牌气质？</li>
+                                <li>裁成目标渠道尺寸后还成立吗？</li>
+                                <li>有没有一眼看上去就很假的细节？</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">六、修改方法</h2>
+                            <p class="guide-p">很多糟糕的修改循环，都来自一句空话：<code>make it better</code>。</p>
+                            <p class="guide-p">更好的指令应该像这样：</p>
+                            <ul class="guide-ul">
+                                <li>放大主标题，减少背景细节</li>
+                                <li>保持构图不变，把瓶盖换成拉丝铝</li>
+                                <li>保留信息图结构，压缩调色盘</li>
+                                <li>保持人像光线，去掉多余饰品</li>
+                            </ul>
+                            <p class="guide-p"><strong>一轮只修一类问题，控制力才会回来。</strong></p>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">七、常见错误</h2>
+                            <ol class="guide-ol">
+                                <li>把关键词堆砌当成 Prompt</li>
+                                <li>在图里塞太多文字</li>
+                                <li>把海报、产品图、信息图、编辑视觉混成一个目标</li>
+                                <li>明明只需局部修正，却不断从零重生成</li>
+                            </ol>
+                            <p class="guide-p" style="margin-top: 14px; color: #00d4ff;">核心原则：追求"更可控"，而非"更新奇"。</p>
+                        </div>
+                    </div>
+
+                    <!-- General Guide (kept as secondary) -->
+                    <div class="guide-container" v-if="selectedGuide === 'general'">
+                        <div class="page-header">
+                            <h1 class="page-title">通用提示词编写指南</h1>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">一、提示词基本结构</h2>
+                            <p class="guide-p">一条好的图像生成提示词通常包含以下五个层次，按重要性从高到低排列：</p>
+                            <div class="guide-code-block">
+                                <span class="guide-tag tag-subject">主体</span> + <span class="guide-tag tag-scene">场景</span> + <span class="guide-tag tag-style">风格</span> + <span class="guide-tag tag-detail">细节</span> + <span class="guide-tag tag-tech">技术参数</span>
+                            </div>
+                            <ul class="guide-ul">
+                                <li><strong>主体</strong>：画面核心内容 — 谁、什么、几个、什么姿态</li>
+                                <li><strong>场景</strong>：环境背景 — 室内/室外、天气、时间、地点</li>
+                                <li><strong>风格</strong>：艺术形式 — 摄影写实、3D渲染、插画、油画、海报等</li>
+                                <li><strong>细节</strong>：材质、色彩、光影、情绪氛围、服装道具</li>
+                                <li><strong>技术参数</strong>：画面比例、画质参数、相机参数等</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">二、主体描述要点</h2>
+                            <ul class="guide-ul">
+                                <li><strong>具体明确</strong>：与其写"一个人"，不如写"一位30岁的亚洲女性，短发，戴黑框眼镜，穿白色实验服"</li>
+                                <li><strong>数量清晰</strong>：明确主体数量 — "三只猫"而非"几只猫"</li>
+                                <li><strong>动作姿态</strong>：描述主体的动作 — "站立、双手交叉、微笑看向镜头"</li>
+                                <li><strong>面部与表情</strong>：指定表情 — "温柔微笑"、"专注凝视"、"惊讶张嘴"</li>
+                                <li><strong>服装造型</strong>：服装风格决定画面基调 — "街头潮流"与"晚礼服"截然不同</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">三、场景与构图</h2>
+                            <div class="guide-grid">
+                                <div class="guide-card">
+                                    <h3>景别选择</h3>
+                                    <ul class="guide-ul">
+                                        <li><strong>特写</strong>（close-up）：突出面部或物体细节</li>
+                                        <li><strong>中景</strong>（medium shot）：腰部以上，适合人像</li>
+                                        <li><strong>全景</strong>（full shot）：全身，展示完整人物</li>
+                                        <li><strong>远景</strong>（wide shot）：大场景，人物占比小</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-card">
+                                    <h3>拍摄角度</h3>
+                                    <ul class="guide-ul">
+                                        <li><strong>平视</strong>（eye level）：自然视角</li>
+                                        <li><strong>俯拍</strong>（bird's-eye / high angle）：从上往下</li>
+                                        <li><strong>仰拍</strong>（low angle）：从下往上，显大或威严</li>
+                                        <li><strong>倾斜</strong>（Dutch angle）：制造不安或动感</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">四、风格与媒介</h2>
+                            <p class="guide-p">选择明确的视觉风格，让AI更好地理解你的意图：</p>
+                            <div class="guide-grid">
+                                <div class="guide-card">
+                                    <h3>摄影类</h3>
+                                    <ul class="guide-ul">
+                                        <li>photorealistic / realistic photo</li>
+                                        <li>cinematic / film still</li>
+                                        <li>portrait photography</li>
+                                        <li>product photography</li>
+                                        <li>documentary style</li>
+                                        <li>vintage / film grain</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-card">
+                                    <h3>艺术类</h3>
+                                    <ul class="guide-ul">
+                                        <li>illustration / digital art</li>
+                                        <li>oil painting / watercolor</li>
+                                        <li>anime / manga style</li>
+                                        <li>3D render / CGI</li>
+                                        <li>pixel art / vector art</li>
+                                        <li>line art / sketch</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">五、光影与色彩</h2>
+                            <ul class="guide-ul">
+                                <li><strong>光源类型</strong>：sunlight（日光）、studio light（棚拍灯）、neon light（霓虹灯）、candlelight（烛光）、rim light（轮廓光）</li>
+                                <li><strong>光源方向</strong>：front lighting（正面光）、side lighting（侧光）、backlighting（逆光）、top lighting（顶光）</li>
+                                <li><strong>光影效果</strong>：soft shadows（柔阴影）、hard shadows（硬阴影）、chiaroscuro（明暗对比）、silhouette（剪影）</li>
+                                <li><strong>色调方案</strong>：warm tones（暖色调）、cool tones（冷色调）、pastel colors（粉彩色调）、monochrome（单色）、vibrant（鲜艳）、muted（低饱和）</li>
+                                <li><strong>特殊效果</strong>：bokeh（背景虚化光斑）、lens flare（镜头光晕）、motion blur（运动模糊）、shallow depth of field（浅景深）</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">六、常用技术参数</h2>
+                            <div class="guide-table-wrapper">
+                                <table class="guide-table">
+                                    <thead>
+                                        <tr><th>参数</th><th>说明</th><th>示例</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td><code>--ar</code></td><td>画面宽高比</td><td><code>--ar 16:9</code>（横屏）、<code>--ar 3:4</code>（竖屏）、<code>--ar 1:1</code>（方形）</td></tr>
+                                        <tr><td><code>--v</code></td><td>模型版本</td><td><code>--v 6.0</code></td></tr>
+                                        <tr><td><code>--style</code></td><td>风格强度</td><td><code>--style raw</code>（减少美化）</td></tr>
+                                        <tr><td><code>--q</code></td><td>画质</td><td><code>--q 2</code>（高清）</td></tr>
+                                        <tr><td><code>--no</code></td><td>排除元素</td><td><code>--no text, watermark</code></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">七、编写技巧</h2>
+                            <ol class="guide-ol">
+                                <li><strong>用正面描述代替负面描述</strong>：与其写"不要模糊"，不如写"sharp focus, highly detailed"</li>
+                                <li><strong>关键词顺序有影响</strong>：越靠前的词权重越高</li>
+                                <li><strong>避免矛盾描述</strong>：不要同时要求"realistic photo"和"cartoon style"</li>
+                                <li><strong>一次不要贪多</strong>：一条 prompt 聚焦一个核心场景</li>
+                                <li><strong>反复迭代</strong>：根据结果调整关键词和权重</li>
+                                <li><strong>保留英文关键词</strong>：风格、技术术语、构图参数等保留英文原词</li>
+                                <li><strong>善用括号加权</strong>：部分模型支持 <code>(important detail:1.2)</code> 语法提高特定元素权重</li>
+                            </ol>
+                        </div>
+
+                        <div class="guide-section">
+                            <h2 class="guide-h2">八、示例对比</h2>
+                            <div class="guide-grid">
+                                <div class="guide-card bad">
+                                    <h3>❌ 不推荐</h3>
+                                    <div class="guide-code bg-bad">一只猫 / a cat</div>
+                                    <p class="guide-card-hint">过于简单，AI 无法理解具体需求</p>
+                                </div>
+                                <div class="guide-card good">
+                                    <h3>✅ 推荐</h3>
+                                    <div class="guide-code bg-good">一只橘色虎斑猫坐在洒满阳光的窗台上，窗外是秋天的落叶，温暖的午后光线从左侧照入，柔和的浅景深虚化背景，写实摄影风格，竖构图 3:4，bokeh 效果</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -788,11 +1714,12 @@
     <script>
         const { createApp, ref, computed, onMounted } = Vue;
         
-        const API_BASE = 'http://localhost:8768';
+        const API_BASE = '';
         
         createApp({
             setup() {
                 const currentPage = ref('home');
+                const selectedGuide = ref('gpt-image-2');
                 const templates = ref([]);
                 const categories = ref([]);
                 const selectedCategory = ref('');
@@ -805,21 +1732,81 @@
                 const matchResult = ref(null);
                 const matchError = ref(null);
                 const copyOptimizedSuccess = ref(false);
+                const conversation = ref([]);
+                const templateRefForAI = ref(null);
                 const submitting = ref(false);
                 const submitSuccess = ref(false);
-                
+
+                // Search & filter
+                const searchQuery = ref('');
+                const selectedStyles = ref([]);
+                const selectedScenes = ref([]);
+
+                // Edit
+                const editForm = ref({ title: '', prompt: '', category: '', description: '' });
+                const editStyles = ref([]);
+                const editScenes = ref([]);
+                const newEditStyle = ref('');
+                const newEditScene = ref('');
+                const saving = ref(false);
+                const saveSuccess = ref(false);
+                const deleting = ref(false);
+                const showDeleteConfirm = ref(false);
+
                 const toast = ref({ show: false, message: '' });
-                
+                const isEditing = ref(false);
+                const imageApiUrl = ref('http://localhost:8766');
+
                 const submitForm = ref({
                     title: '',
                     prompt: '',
                     category: '',
                     description: ''
                 });
-                
+                const submitStyles = ref([]);
+                const submitScenes = ref([]);
+                const submitError = ref('');
+                const newSubmitStyle = ref('');
+                const newSubmitScene = ref('');
+
+                // Computed: all unique styles/scenes/categories
+                const allStyles = computed(() => {
+                    const s = new Set();
+                    templates.value.forEach(t => t.styles?.forEach(x => s.add(x)));
+                    return [...s].sort();
+                });
+                const allScenes = computed(() => {
+                    const s = new Set();
+                    templates.value.forEach(t => t.scenes?.forEach(x => s.add(x)));
+                    return [...s].sort();
+                });
+                const allCategories = computed(() => categories.value);
+
+                // Computed: filtered templates with search + category + style + scene
                 const filteredTemplates = computed(() => {
-                    if (!selectedCategory.value) return templates.value;
-                    return templates.value.filter(t => t.category === selectedCategory.value);
+                    let result = templates.value;
+                    if (selectedCategory.value) {
+                        result = result.filter(t => t.category === selectedCategory.value);
+                    }
+                    if (searchQuery.value.trim()) {
+                        const q = searchQuery.value.toLowerCase();
+                        result = result.filter(t =>
+                            (t.title && t.title.toLowerCase().includes(q)) ||
+                            (t.prompt && t.prompt.toLowerCase().includes(q)) ||
+                            (t.description && t.description.toLowerCase().includes(q))
+                        );
+                    }
+                    if (selectedStyles.value.length) {
+                        result = result.filter(t =>
+                            selectedStyles.value.some(s => t.styles?.includes(s))
+                        );
+                    }
+                    if (selectedScenes.value.length) {
+                        result = result.filter(t =>
+                            selectedScenes.value.some(s => t.scenes?.includes(s))
+                        );
+                    }
+                    return result;
                 });
                 
                 function showToast(message) {
@@ -832,7 +1819,9 @@
                 async function loadTemplates() {
                     try {
                         const res = await fetch(`${API_BASE}/api/templates`);
-                        templates.value = await res.json();
+                        const data = await res.json();
+                        templates.value = data;
+                        console.log('Loaded', data.length, 'templates');
                     } catch (e) {
                         console.error('Failed to load templates:', e);
                         templates.value = [];
@@ -848,6 +1837,16 @@
                         categories.value = [];
                     }
                 }
+
+                async function loadConfig() {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/config`);
+                        const cfg = await res.json();
+                        imageApiUrl.value = cfg.image_api_url || 'http://localhost:8766';
+                    } catch (e) {
+                        console.error('Failed to load config:', e);
+                    }
+                }
                 
                 function getCategoryCount(cat) {
                     return templates.value.filter(t => t.category === cat).length;
@@ -858,39 +1857,184 @@
                     matchResult.value = null;
                     matchError.value = null;
                     submitSuccess.value = false;
+                    if (page !== 'match') {
+                        conversation.value = [];
+                        templateRefForAI.value = null;
+                    }
                     window.location.hash = page;
                 }
                 
                 function selectCategory(cat) {
                     selectedCategory.value = cat;
+                    if (currentPage.value !== 'home') {
+                        navigate('home');
+                    }
                 }
                 
+                function populateEditForm(tpl) {
+                    currentTemplate.value = tpl;
+                    editForm.value = {
+                        title: tpl.title || '',
+                        prompt: tpl.prompt || '',
+                        category: tpl.category || '',
+                        description: tpl.description || ''
+                    };
+                    editStyles.value = [...(tpl.styles || [])];
+                    editScenes.value = [...(tpl.scenes || [])];
+                    charCount.value = (tpl.prompt || '').length;
+                    showDeleteConfirm.value = false;
+                    saveSuccess.value = false;
+                    isEditing.value = false;
+                }
+
+                function startEditing() {
+                    isEditing.value = true;
+                }
+
+                function generateImage(prompt) {
+                    if (!prompt) return;
+                    const url = imageApiUrl.value + '/?prompt=' + encodeURIComponent(prompt);
+                    window.open(url, '_blank');
+                }
+
                 async function editTemplate(id) {
                     try {
                         const res = await fetch(`${API_BASE}/api/templates/${id}`);
-                        currentTemplate.value = await res.json();
-                        editedPrompt.value = currentTemplate.value.prompt;
-                        charCount.value = editedPrompt.value.length;
+                        const tpl = await res.json();
+                        populateEditForm(tpl);
                         currentPage.value = 'edit';
                         window.location.hash = 'edit/' + id;
                     } catch (e) {
                         console.error('Failed to load template:', e);
                     }
                 }
-                
+
                 function updateCharCount() {
-                    charCount.value = editedPrompt.value.length;
+                    charCount.value = editForm.value.prompt.length;
                 }
-                
+
                 async function copyPrompt() {
+                    copyToClipboard(editForm.value.prompt);
+                    copySuccess.value = true;
+                    setTimeout(() => copySuccess.value = false, 2000);
+                }
+
+                // Search & filter helpers
+                function toggleStyle(style) {
+                    const idx = selectedStyles.value.indexOf(style);
+                    if (idx >= 0) selectedStyles.value.splice(idx, 1);
+                    else selectedStyles.value.push(style);
+                }
+                function toggleScene(scene) {
+                    const idx = selectedScenes.value.indexOf(scene);
+                    if (idx >= 0) selectedScenes.value.splice(idx, 1);
+                    else selectedScenes.value.push(scene);
+                }
+                function clearFilters() {
+                    searchQuery.value = '';
+                    selectedStyles.value = [];
+                    selectedScenes.value = [];
+                }
+
+                // Submit tag helpers
+                function toggleSubmitStyle(s) {
+                    const idx = submitStyles.value.indexOf(s);
+                    if (idx >= 0) submitStyles.value.splice(idx, 1);
+                    else submitStyles.value.push(s);
+                }
+                function toggleSubmitScene(s) {
+                    const idx = submitScenes.value.indexOf(s);
+                    if (idx >= 0) submitScenes.value.splice(idx, 1);
+                    else submitScenes.value.push(s);
+                }
+                function removeSubmitStyle(s) { submitStyles.value = submitStyles.value.filter(x => x !== s); }
+                function removeSubmitScene(s) { submitScenes.value = submitScenes.value.filter(x => x !== s); }
+                function addSubmitStyle() {
+                    const v = newSubmitStyle.value.trim();
+                    if (v && !submitStyles.value.includes(v)) submitStyles.value.push(v);
+                    newSubmitStyle.value = '';
+                }
+                function addSubmitScene() {
+                    const v = newSubmitScene.value.trim();
+                    if (v && !submitScenes.value.includes(v)) submitScenes.value.push(v);
+                    newSubmitScene.value = '';
+                }
+
+                // Edit tag helpers
+                function toggleEditStyle(s) {
+                    const idx = editStyles.value.indexOf(s);
+                    if (idx >= 0) editStyles.value.splice(idx, 1);
+                    else editStyles.value.push(s);
+                }
+                function toggleEditScene(s) {
+                    const idx = editScenes.value.indexOf(s);
+                    if (idx >= 0) editScenes.value.splice(idx, 1);
+                    else editScenes.value.push(s);
+                }
+                function removeEditStyle(s) { editStyles.value = editStyles.value.filter(x => x !== s); }
+                function removeEditScene(s) { editScenes.value = editScenes.value.filter(x => x !== s); }
+                function addEditStyle() {
+                    const v = newEditStyle.value.trim();
+                    if (v && !editStyles.value.includes(v)) editStyles.value.push(v);
+                    newEditStyle.value = '';
+                }
+                function addEditScene() {
+                    const v = newEditScene.value.trim();
+                    if (v && !editScenes.value.includes(v)) editScenes.value.push(v);
+                    newEditScene.value = '';
+                }
+
+                // Save & Delete
+                async function saveTemplate() {
+                    if (!currentTemplate.value) return;
+                    saving.value = true;
+                    saveSuccess.value = false;
                     try {
-                        await navigator.clipboard.writeText(editedPrompt.value);
-                        copySuccess.value = true;
-                        showToast('已复制!');
-                        setTimeout(() => copySuccess.value = false, 2000);
+                        const body = {
+                            title: editForm.value.title,
+                            prompt: editForm.value.prompt,
+                            category: editForm.value.category,
+                            styles: editStyles.value,
+                            scenes: editScenes.value,
+                            description: editForm.value.description,
+                        };
+                        const res = await fetch(`${API_BASE}/api/templates/${currentTemplate.value.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        });
+                        if (!res.ok) throw new Error(`API error: ${res.status}`);
+                        const updated = await res.json();
+                        // Update local cache
+                        const idx = templates.value.findIndex(t => t.id === updated.id);
+                        if (idx >= 0) templates.value[idx] = updated;
+                        currentTemplate.value = updated;
+                        charCount.value = updated.prompt.length;
+                        saveSuccess.value = true;
+                        showToast('保存成功!');
                     } catch (e) {
-                        console.error('Copy failed:', e);
+                        console.error('Save failed:', e);
+                        showToast('保存失败: ' + e.message);
                     }
+                    saving.value = false;
+                }
+
+                async function deleteTemplate() {
+                    if (!currentTemplate.value) return;
+                    deleting.value = true;
+                    try {
+                        const id = currentTemplate.value.id;
+                        const res = await fetch(`${API_BASE}/api/templates/${id}`, { method: 'DELETE' });
+                        if (!res.ok) throw new Error(`API error: ${res.status}`);
+                        // Remove from local cache
+                        templates.value = templates.value.filter(t => t.id !== id);
+                        showToast('已删除!');
+                        navigate('home');
+                    } catch (e) {
+                        console.error('Delete failed:', e);
+                        showToast('删除失败: ' + e.message);
+                    }
+                    deleting.value = false;
                 }
                 
                 async function doMatch() {
@@ -898,50 +2042,139 @@
                     matching.value = true;
                     matchError.value = null;
                     matchResult.value = null;
+                    const userInput = matchInput.value.trim();
                     try {
+                        const history = [];
+                        conversation.value.forEach(turn => {
+                            history.push({ role: 'user', content: turn.userInput });
+                            history.push({ role: 'assistant', content: turn.result?.optimized_prompt || '' });
+                        });
+                        const body = {
+                            user_input: userInput,
+                            history: history.length ? history : undefined,
+                            template_ref: templateRefForAI.value || undefined,
+                        };
                         const res = await fetch(`${API_BASE}/api/match`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ user_input: matchInput.value })
+                            body: JSON.stringify(body)
                         });
-                        if (!res.ok) {
-                            throw new Error(`API error: ${res.status}`);
-                        }
-                        matchResult.value = await res.json();
+                        if (!res.ok) throw new Error(`API error: ${res.status}`);
+                        const result = await res.json();
+                        matchResult.value = result;
+                        conversation.value.push({ userInput, result });
+                        matchInput.value = '';
                     } catch (e) {
                         console.error('Match failed:', e);
-                        matchError.value = '匹配失败，请稍后重试或使用关键词搜索。';
+                        matchError.value = 'AI 服务暂时不可用，请稍后重试。';
                     }
                     matching.value = false;
                 }
-                
-                async function copyOptimizedPrompt() {
-                    if (matchResult.value?.optimized_prompt) {
+
+                function resetConversation() {
+                    conversation.value = [];
+                    matchResult.value = null;
+                    matchError.value = null;
+                    templateRefForAI.value = null;
+                }
+
+                function useTemplateInAI() {
+                    resetConversation();
+                    templateRefForAI.value = {
+                        id: currentTemplate.value.id,
+                        title: currentTemplate.value.title,
+                        prompt: currentTemplate.value.prompt,
+                        category: currentTemplate.value.category,
+                        styles: currentTemplate.value.styles,
+                        scenes: currentTemplate.value.scenes,
+                        description: currentTemplate.value.description,
+                    };
+                    matchInput.value = '';
+                    currentPage.value = 'match';
+                    window.location.hash = 'match';
+                }
+
+                function copyToClipboard(text) {
+                    // Fallback for HTTP (non-secure context) where navigator.clipboard is unavailable
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(() => showToast('已复制!')).catch(e => console.error('Copy failed:', e));
+                    } else {
+                        const ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.position = 'fixed';
+                        ta.style.left = '-9999px';
+                        ta.style.top = '-9999px';
+                        document.body.appendChild(ta);
+                        ta.focus();
+                        ta.select();
                         try {
-                            await navigator.clipboard.writeText(matchResult.value.optimized_prompt);
-                            copyOptimizedSuccess.value = true;
+                            document.execCommand('copy');
                             showToast('已复制!');
-                            setTimeout(() => copyOptimizedSuccess.value = false, 2000);
                         } catch (e) {
                             console.error('Copy failed:', e);
                         }
+                        document.body.removeChild(ta);
+                    }
+                }
+
+                async function copyConvPrompt(text) {
+                    copyToClipboard(text);
+                }
+
+                async function useMatchedTemplate(tpl) {
+                    populateEditForm(tpl);
+                    currentPage.value = 'edit';
+                    window.location.hash = 'edit/' + tpl.id;
+                }
+
+                async function copyOptimizedPrompt() {
+                    if (matchResult.value?.optimized_prompt) {
+                        copyToClipboard(matchResult.value.optimized_prompt);
+                        copyOptimizedSuccess.value = true;
+                        setTimeout(() => copyOptimizedSuccess.value = false, 2000);
                     }
                 }
                 
                 async function submitTemplate() {
-                    if (!submitForm.value.title || !submitForm.value.prompt) return;
+                    // Validate
+                    const missing = [];
+                    if (!submitForm.value.title.trim()) missing.push('标题');
+                    if (!submitForm.value.category) missing.push('分类');
+                    if (!submitForm.value.prompt.trim()) missing.push('Prompt');
+                    if (!submitStyles.value.length) missing.push('风格标签');
+                    if (!submitScenes.value.length) missing.push('场景标签');
+                    if (missing.length) {
+                        submitError.value = '请填写：' + missing.join('、');
+                        return;
+                    }
+                    submitError.value = '';
                     submitting.value = true;
                     try {
-                        await fetch(`${API_BASE}/api/templates/submit`, {
+                        const body = {
+                            title: submitForm.value.title,
+                            prompt: submitForm.value.prompt,
+                            category: submitForm.value.category,
+                            styles: submitStyles.value,
+                            scenes: submitScenes.value,
+                            description: submitForm.value.description,
+                        };
+                        const res = await fetch(`${API_BASE}/api/templates/submit`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(submitForm.value)
+                            body: JSON.stringify(body)
                         });
+                        if (!res.ok) throw new Error(`API error: ${res.status}`);
+                        const data = await res.json();
+                        templates.value.push(data.template);
                         submitSuccess.value = true;
-                        showToast('提交成功!');
+                        showToast('提交成功! 已加入模板库');
                         submitForm.value = { title: '', prompt: '', category: '', description: '' };
+                        submitStyles.value = [];
+                        submitScenes.value = [];
+                        setTimeout(() => { submitSuccess.value = false; }, 3000);
                     } catch (e) {
                         console.error('Submit failed:', e);
+                        showToast('提交失败');
                     }
                     submitting.value = false;
                 }
@@ -951,7 +2184,7 @@
                     if (hash.startsWith('edit/')) {
                         const id = parseInt(hash.split('/')[1]);
                         editTemplate(id);
-                    } else if (['home', 'match', 'submit'].includes(hash)) {
+                    } else if (['home', 'match', 'submit', 'guide'].includes(hash)) {
                         currentPage.value = hash;
                     } else {
                         currentPage.value = 'home';
@@ -961,12 +2194,14 @@
                 onMounted(() => {
                     loadTemplates();
                     loadCategories();
+                    loadConfig();
                     handleHashChange();
                     window.addEventListener('hashchange', handleHashChange);
                 });
                 
                 return {
                     currentPage,
+                    selectedGuide,
                     templates,
                     categories,
                     selectedCategory,
@@ -983,7 +2218,29 @@
                     submitting,
                     submitSuccess,
                     submitForm,
+                    submitStyles,
+                    submitScenes,
+                    submitError,
+                    newSubmitStyle,
+                    newSubmitScene,
                     toast,
+                    isEditing,
+                    imageApiUrl,
+                    searchQuery,
+                    selectedStyles,
+                    selectedScenes,
+                    allStyles,
+                    allScenes,
+                    allCategories,
+                    editForm,
+                    editStyles,
+                    editScenes,
+                    newEditStyle,
+                    newEditScene,
+                    saving,
+                    saveSuccess,
+                    deleting,
+                    showDeleteConfirm,
                     getCategoryCount,
                     navigate,
                     selectCategory,
@@ -991,8 +2248,33 @@
                     updateCharCount,
                     copyPrompt,
                     doMatch,
+                    useMatchedTemplate,
                     copyOptimizedPrompt,
-                    submitTemplate
+                    conversation,
+                    templateRefForAI,
+                    resetConversation,
+                    useTemplateInAI,
+                    copyConvPrompt,
+                    submitTemplate,
+                    toggleStyle,
+                    toggleScene,
+                    clearFilters,
+                    saveTemplate,
+                    deleteTemplate,
+                    toggleSubmitStyle,
+                    toggleSubmitScene,
+                    removeSubmitStyle,
+                    removeSubmitScene,
+                    addSubmitStyle,
+                    addSubmitScene,
+                    toggleEditStyle,
+                    toggleEditScene,
+                    removeEditStyle,
+                    removeEditScene,
+                    addEditStyle,
+                    addEditScene,
+                    startEditing,
+                    generateImage,
                 };
             }
         }).mount('#app');

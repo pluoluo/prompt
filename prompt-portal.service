@@ -1,0 +1,16 @@
+[Unit]
+Description=Prompt Portal - AI 图像提示词库
+After=network.target
+
+[Service]
+Type=simple
+User=sahn
+WorkingDirectory=/home/sahn/prompt
+ExecStart=/usr/bin/python3 -m backend.main
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/sahn/prompt/backend/start.log
+StandardError=append:/home/sahn/prompt/backend/start.log
+
+[Install]
+WantedBy=multi-user.target

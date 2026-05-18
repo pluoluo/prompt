@@ -3,3 +3,23 @@ __pycache__/
 .env
 venv/
 .venv/
+
+# Logs
+nginx-access.log
+nginx-error.log
+nginx.pid
+
+# Runtime data
+*.pid
+
+# Backup data
+*.bak
+*_备份.json
+*_step1.json
+
+# Local configs
+nginx-portal.conf
+prompt-portal-nginx.conf
+
+# Work files
+backend/pending_review.json
