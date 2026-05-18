@@ -632,6 +632,21 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
+
+        .optimized-prompt-textarea {
+            width: 100%;
+            margin-top: 6px;
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1f2f 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            color: #fff;
+            line-height: 1.8;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
         
         .copy-prompt-btn {
             position: absolute;
@@ -1265,14 +1280,16 @@
                                         </div>
                                         <div class="result-section" v-if="turn.result?.optimized_prompt" style="margin-top:12px;">
                                             <div class="result-label">AI 生成的中文 Prompt</div>
-                                            <div class="optimized-prompt-box" style="margin-top:6px;">
-                                                <div class="optimized-prompt-text">{{ turn.result.optimized_prompt }}</div>
-                                                <button class="copy-prompt-btn" @click="copyConvPrompt(turn.result.optimized_prompt)">
-                                                    复制
-                                                </button>
-                                                <button class="copy-prompt-btn" style="right:80px;background:#6bcb77;" @click="generateImage(turn.result.optimized_prompt)">
-                                                    🎨 生成图像
-                                                </button>
+                                            <div style="margin-top:6px;">
+                                                <textarea class="optimized-prompt-textarea" v-model="editablePrompt" rows="5"></textarea>
+                                                <div style="display:flex; gap:10px; margin-top:10px;">
+                                                    <button class="btn btn-secondary" @click="copyConvPrompt(editablePrompt)">
+                                                        {{ copySuccess ? '已复制!' : '复制 Prompt' }}
+                                                    </button>
+                                                    <button class="btn btn-secondary" @click="generateImage(editablePrompt)">
+                                                        🎨 生成图像
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1297,8 +1314,8 @@
                                 <span v-if="matching" class="loading-spinner"></span>
                                 {{ matching ? 'AI 思考中...' : (conversation.length ? '继续修改' : '开始生成') }}
                             </button>
-                            <button class="btn btn-secondary" v-if="matchInput.trim()" @click="generateImage(matchInput.trim())">
-                                🎨 生成图像
+                            <button class="btn btn-secondary" v-if="editablePrompt.trim()" @click="generateImage(editablePrompt.trim())">
+                                🎨 用当前 Prompt 生成图像
                             </button>
                             <button class="btn btn-secondary" v-if="conversation.length" @click="resetConversation">
                                 重新开始
@@ -1733,6 +1750,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                 const matchError = ref(null);
                 const copyOptimizedSuccess = ref(false);
                 const conversation = ref([]);
+                const editablePrompt = ref('');
                 const templateRefForAI = ref(null);
                 const submitting = ref(false);
                 const submitSuccess = ref(false);
@@ -2062,6 +2080,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         if (!res.ok) throw new Error(`API error: ${res.status}`);
                         const result = await res.json();
                         matchResult.value = result;
+                        editablePrompt.value = result.optimized_prompt || '';
                         conversation.value.push({ userInput, result });
                         matchInput.value = '';
                     } catch (e) {
@@ -2075,6 +2094,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     conversation.value = [];
                     matchResult.value = null;
                     matchError.value = null;
+                    editablePrompt.value = '';
                     templateRefForAI.value = null;
                 }
 
@@ -2216,6 +2236,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     matchError,
                     copyOptimizedSuccess,
                     submitting,
+                    editablePrompt,
                     submitSuccess,
                     submitForm,
                     submitStyles,
