@@ -562,14 +562,15 @@
         
         .match-textarea {
             width: 100%;
-            height: 120px;
+            min-height: 180px;
+            height: 240px;
+            resize: vertical;
             background: #1a1a1a;
             border: 1px solid #333;
             border-radius: 10px;
             padding: 20px;
             color: #fff;
             font-size: 14px;
-            resize: none;
         }
         
         .match-textarea:focus {
@@ -1494,7 +1495,7 @@
                 <div v-if="currentPage === 'match'">
                     <div class="match-container">
                         <div class="page-header">
-                            <h1 class="page-title">AI 优化生成</h1>
+                            <h1 class="page-title">AI 优化提示词</h1>
                             <span class="template-count" v-if="templateRefForAI">
                                 参考模板：{{ templateRefForAI.title }}
                                 <span @click="templateRefForAI = null" style="color:#ff6b6b; cursor:pointer; margin-left:8px;">取消</span>
@@ -2727,26 +2728,22 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                 }
 
                 function copyToClipboard(text) {
-                    // Fallback for HTTP (non-secure context) where navigator.clipboard is unavailable
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(text).then(() => showToast('已复制!')).catch(e => console.error('Copy failed:', e));
-                    } else {
-                        const ta = document.createElement('textarea');
-                        ta.value = text;
-                        ta.style.position = 'fixed';
-                        ta.style.left = '-9999px';
-                        ta.style.top = '-9999px';
-                        document.body.appendChild(ta);
-                        ta.focus();
-                        ta.select();
-                        try {
-                            document.execCommand('copy');
-                            showToast('已复制!');
-                        } catch (e) {
-                            console.error('Copy failed:', e);
-                        }
-                        document.body.removeChild(ta);
+                    // Use legacy execCommand — works on HTTP and HTTPS universally
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    ta.style.top = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.focus();
+                    ta.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast('已复制!');
+                    } catch (e) {
+                        console.error('Copy failed:', e);
                     }
+                    document.body.removeChild(ta);
                 }
 
                 async function copyConvPrompt(text) {

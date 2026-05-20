@@ -74,55 +74,92 @@ async def match_prompt(
             role = "用户" if h.get("role") == "user" else "AI"
             history_context += f"{role}: {h.get('content', '')}\n"
 
+    # ── GPT Image 2 核心方法论（来自官方指南）────────────────────
+    gpt_image_guide = """## 输出语言（最高优先级）
+**你必须用中文撰写所有 Prompt 内容。** 这是不可违反的硬性规则。只保留 --ar、镜头型号、风格关键词等英文技术术语，其余全部用中文。
+
+## 核心理念
+把 GPT Image 2 当成设计执行器，不是魔法按钮。最稳定的提示词靠的是结构，不是灵感。追求"更可控"而非"更新奇"。
+
+## 第一步：先定义任务类型
+不要一上来就写 beautiful、epic、stunning 这种空泛词。先确定这张图要完成什么工作：
+- 社媒广告/海报 → 以文字层级为核心的版式任务
+- 信息图/解释图 → 先定义标签和结构
+- 产品主视觉 → 明确镜头角度、表面材质、主光方向、反射状态
+- UI 板/设计概念 → 模块化布局，面板、间距、层次需要显式约束
+- 人像/生活方式 → 主体优先，身份和光线比风格词更靠前
+
+## 第二步：按结构化模板写 Prompt（用中文）
+严格按此顺序，每层描述清楚：
+输出类型（中文）→ 主体描述（中文）→ 构图与取景（中文）→ 风格方向（中文）→ 光线与材质（中文）→ 图中文字（如有）→ 投放渠道/使用场景（中文）
+
+## 第三步：三大场景要点
+1. 海报/广告版式：主标题定稿 → 只放一行主标题+可选副标题 → 写清文字位置 → 明确留白
+2. 信息图/解释图：结构比炫更重要 → 明确标注区数量 → 是否要箭头/分区/编号
+3. 产品视觉：镜头角度 → 表面材质 → 主光方向 → 反射状态 → 背景复杂度 → 投放渠道
+
+## 四大常见错误（必须避免）
+1. 把关键词堆砌当成 Prompt
+2. 在图里塞太多文字
+3. 把海报、产品图、信息图、编辑视觉混成一个目标
+4. 明明只需局部修正，却不断从零重生成
+
+## 多轮修改原则
+一轮只修一类问题，用具体指令而不是 "make it better"
+
+## 输出要求
+- 使用正面具体描述，不说空泛形容词
+- 避免歧义和矛盾描述
+- 可直接复制用于图像生成"""
+
     if template_ref:
         # User chose a specific template — skip matching, just generate based on reference
-        system_prompt = """You are a JSON-only response bot. You MUST output valid JSON and NOTHING ELSE — no markdown, no code fences, no extra text, no explanations outside the JSON.
+        system_prompt = f"""You are a JSON-only response bot. You MUST output valid JSON and NOTHING ELSE — no markdown, no code fences, no extra text.
 
-你是一个AI图像提示词(Prompt)专家，遵循 GPT Image 2 的结构化提示词方法论。
+你是一个 AI 图像提示词(Prompt)编辑专家。
 
-用户已经选择了一个参考模板，你的任务只是：基于该参考模板的风格和结构，根据用户需求生成一个优化后的中文Prompt。
-不要匹配其他模板，不要给出匹配理由。
+## 核心原则：模板结构优先
 
-生成中文Prompt的规范：
-- 参考模板的结构特点（输出类型、层级、风格方向、光线材质处理）
-- 但内容要完全针对用户的新需求
-- 按层级结构写：输出类型 → 主体描述 → 构图取景 → 风格方向 → 光线与材质 → 图中文字(如有) → 适用场景
-- 使用中文详细描述画面，保留英文技术术语
+用户已选择了一个参考模板，你需要严格以该模板为蓝本进行改写：
+1. 逐段分析参考模板的结构——它有哪些段落/模块？每个模块用什么格式？参数怎么排列？
+2. 保持模板的原始结构和格式不变——分段方式、参数命名、列表格式、特殊标记全都保留
+3. 仅将模板中的具体内容替换为用户新需求的内容
+4. 如果用户需求与模板结构有冲突，以模板结构为准，把需求适配进去
+5. 模板中的占位符（如 {{argument}}、[placeholder]）如果用户没提供，保留原样或填合理默认值
+
+## 质量标准（参考 GPT Image 2 指南）
+- 必须用中文输出（硬性要求），仅保留英文技术术语（--ar、镜头型号、风格关键词）
 - 用正面具体描述代替空泛形容词
+- 避免歧义和矛盾描述
+- 如果是多轮对话，一轮只修一类问题，不要重写整个 prompt
 
-Output ONLY valid JSON in this exact format:
-{"optimized_prompt": "优化后的中文提示词"}"""
+不要匹配其他模板，不要给出匹配理由，不要套用任何预设的模板格式。
+
+直接输出 JSON（optimized_prompt 必须是中文）：
+{{"optimized_prompt": "中文提示词内容"}}"""
 
         user_prompt = f"""用户需求: {user_input}
 {template_context}
 {history_context}
 
-用户已选择参考以上模板。请基于该模板的风格和结构，生成一个全新的中文Prompt来满足用户需求。
-不需要匹配其他模板，不需要给出理由，只需要生成一个高质量的中文Prompt。
+请逐段分析以上参考模板的结构，保持其格式和模块划分完全不变，只将内容替换为用户需求。optimized_prompt 必须用中文输出，仅保留英文技术术语。"""
 
-Prompt必须遵循 GPT Image 2 的层级结构，可直接用于图像生成。"""
     else:
-        system_prompt = """You are a JSON-only response bot. You MUST output valid JSON and NOTHING ELSE — no markdown, no code fences, no extra text, no explanations outside the JSON.
+        system_prompt = f"""You are a JSON-only response bot. You MUST output valid JSON and NOTHING ELSE — no markdown, no code fences, no extra text.
 
-你是一个AI图像提示词(Prompt)专家，遵循 GPT Image 2 的结构化提示词方法论。你的任务是：
-1. 如果对话历史中有之前生成的Prompt，请在此基础上根据用户新要求进行修改优化
-2. 从模板列表中选出最匹配的2-3个模板
+你是一个 AI 图像提示词(Prompt)专家，严格遵循以下方法论：
+
+{gpt_image_guide}
+
+你的任务：
+1. 先判断用户需求属于哪种任务类型（海报/产品图/信息图/人像/UI板/广告素材）
+2. 从模板列表中选出最匹配的 2-3 个模板，返回它们的完整标题
 3. 用中文解释匹配理由
-4. 根据用户需求（结合对话历史和参考模板），生成一个优化后的中文提示词(Prompt)
+4. 按照上述方法论生成一个完整的结构化中文 Prompt
+5. 如果是多轮对话，遵循"多轮修改原则"
 
-生成中文Prompt的规范（参考 GPT Image 2 结构化方法）：
-- 先确定输出类型（海报/产品视觉/信息图/人像/UI板/广告素材）
-- 按层级结构写：输出类型 → 主体描述 → 构图取景 → 风格方向 → 光线与材质 → 图中文字(如有) → 适用场景
-- 使用中文详细描述画面，保留英文技术术语（构图比例、风格关键词、技术参数等）
-- 用正面具体描述代替空泛形容词（不说"好看"，说"柔和侧光、哑光质感、浅景深"）
-- 明确构图与层级：留白、文字位置、视觉焦点
-- 如果用户需求涉及文字，精确写出需要出现的文字内容
-- 避免歧义和矛盾描述，一条prompt聚焦一个核心场景
-- 追求"可控"而非"新奇"：让提示词可复现、可编辑、可交付
-- 如果是多轮对话，要根据用户新要求进行针对性修改，保持之前生成中用户认可的部分
-
-Output ONLY valid JSON in this exact format, with no other text before or after:
-{"matched_indices": [0, 1, 2], "reason": "匹配理由（中文）", "optimized_prompt": "优化后的中文提示词"}"""
+直接输出 JSON（optimized_prompt 必须是中文）：
+{{"matched_titles": ["模板标题1", "模板标题2"], "reason": "匹配理由（中文）", "optimized_prompt": "中文提示词内容"}}"""
 
         user_prompt = f"""用户需求: {user_input}
 {template_context}
@@ -133,9 +170,7 @@ Output ONLY valid JSON in this exact format, with no other text before or after:
 模板列表(前50个):
 {template_list}
 
-请根据用户需求{'和对话历史中的上下文' if history else ''}，从模板列表中选择最匹配的2-3个模板(使用索引号0-49)，然后生成一个结构化的中文Prompt。
-
-Prompt必须遵循 GPT Image 2 的层级结构：输出类型 → 主体 → 构图 → 风格 → 光线材质 → 文字(如有) → 适用场景。用正面具体描述，避免空泛词。生成的中文Prompt必须可直接用于图像生成。"""
+请按照 GPT Image 2 方法论{'并结合对话历史上下文' if history else ''}，从模板列表中选出最匹配的 2-3 个模板（返回模板的完整标题，不要用索引号），然后生成一份可直接用于图像生成的中文 Prompt。optimized_prompt 必须用中文输出。"""
 
     headers = {
         "X-Api-Key": MINIMAX_API_KEY,
@@ -183,8 +218,19 @@ Prompt必须遵循 GPT Image 2 的层级结构：输出类型 → 主体 → 构
                 json_str = content[json_start:json_end]
                 parsed = json.loads(json_str)
                 
-                matched_indices = parsed.get("matched_indices", [])
-                matched_templates = [templates[i] for i in matched_indices if i < len(templates)]
+                # Match by title (more reliable than numeric indices)
+                matched_templates = []
+                matched_titles = parsed.get("matched_titles", [])
+                if matched_titles:
+                    for title in matched_titles:
+                        for t in templates:
+                            if t.get("title", "").strip() == title.strip():
+                                matched_templates.append(t)
+                                break
+                # Fallback: try old matched_indices format
+                if not matched_templates:
+                    matched_indices = parsed.get("matched_indices", [])
+                    matched_templates = [templates[i] for i in matched_indices if i < len(templates)]
 
                 result = {
                     "optimized_prompt": parsed.get("optimized_prompt", ""),
