@@ -42,7 +42,9 @@ stop() {
 }
 
 restart() {
-    stop
+    # 强制杀掉端口占用的进程
+    lsof -ti:8768 | xargs kill -9 2>/dev/null
+    rm -f "$PID_FILE"
     sleep 1
     start
 }

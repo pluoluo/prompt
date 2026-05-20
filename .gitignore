@@ -23,3 +23,6 @@ prompt-portal-nginx.conf
 
 # Work files
 backend/pending_review.json
+
+# Gallery images (downloaded from GitHub / user uploads)
+backend/data/gallery_images/

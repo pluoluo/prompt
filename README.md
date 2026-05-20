@@ -1,6 +1,10 @@
 # Prompt Portal
 
-AI 图像提示词门户网站 | 基于 awesome-gpt-image-2 体系
+AI 图像提示词门户网站 | 基于 GPT Image 2 结构化方法论（`/home/sahn/prompt`）。
+
+## 鸣谢
+
+案例库图片来源：[EvoLinkAI/awesome-gpt-image-2-API-and-Prompts](https://github.com/EvoLinkAI/awesome-gpt-image-2-API-and-Prompts)（CC0-1.0 许可证）
 
 ## 功能特性
 

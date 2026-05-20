@@ -83,6 +83,10 @@
             border-right: 1px solid #333;
             padding: 20px 0;
             flex-shrink: 0;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
         }
         
         .category-list {
@@ -177,6 +181,21 @@
         .btn-secondary {
             background: #333;
             color: #fff;
+        }
+
+        .lang-btn {
+            padding: 4px 10px;
+            font-size: 12px;
+            min-width: 48px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: #003344;
+            color: #00d4ff;
+            border-color: #00d4ff55;
         }
 
         .btn-secondary:hover {
@@ -471,7 +490,7 @@
             font-size: 11px;
             color: #666;
         }
-        
+
         /* Editor Page */
         .editor-container {
             max-width: 900px;
@@ -489,7 +508,9 @@
         
         .prompt-textarea {
             width: 100%;
+            min-height: 200px;
             height: 400px;
+            resize: vertical;
             background: #1a1a1a;
             border: 1px solid #333;
             border-radius: 10px;
@@ -984,7 +1005,225 @@
                 padding-top: 50px;
             }
 
-            .guide-grid {
+                .guide-grid {
+                    grid-template-columns: 1fr;
+                }
+        }
+
+        /* Gallery Page */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .case-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .case-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.12);
+        }
+        .case-card-img {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            object-fit: cover;
+            background: #111;
+            display: block;
+            flex-shrink: 0;
+        }
+        .case-card-body {
+            padding: 14px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .case-card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            gap: 8px;
+        }
+        .case-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .case-card-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            background: #252525;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #00d4ff;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .case-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .case-card-tag {
+            padding: 2px 6px;
+            background: #222;
+            border-radius: 3px;
+            font-size: 10px;
+            color: #666;
+        }
+        .case-card-prompt-box {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #bbb;
+            font-size: 12px;
+            line-height: 1.5;
+            font-family: Monaco, Menlo, monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 100px;
+            min-height: 50px;
+            cursor: text;
+            user-select: text;
+        }
+        .case-card-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .case-card-meta {
+            font-size: 11px;
+            color: #555;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-right: auto;
+        }
+        .case-card-meta .x-link {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        .case-card-meta .x-link:hover { text-decoration: underline; }
+
+                /* Modal */
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.85);
+                    z-index: 500;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                }
+                .modal-content {
+                    background: #1a1a1a;
+                    border: 1px solid #333;
+                    border-radius: 12px;
+                    max-width: 820px;
+                    width: 100%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    position: relative;
+                }
+                .modal-close {
+                    position: sticky;
+                    top: 0;
+                    background: #1a1a1a;
+                    border-bottom: 1px solid #333;
+                    padding: 16px 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    z-index: 1;
+                }
+                .modal-close-btn {
+                    background: #333;
+                    border: none;
+                    border-radius: 6px;
+                    color: #fff;
+                    padding: 6px 14px;
+                    cursor: pointer;
+                    font-size: 13px;
+                }
+                .modal-close-btn:hover { background: #444; }
+                .modal-body { padding: 20px; }
+                .modal-img {
+                    width: 100%;
+                    border-radius: 8px;
+                    background: #111;
+                    display: block;
+                    margin-bottom: 20px;
+                }
+                .modal-title {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #fff;
+                    margin-bottom: 6px;
+                }
+                .modal-author {
+                    font-size: 13px;
+                    color: #666;
+                    margin-bottom: 16px;
+                }
+                .modal-author a { color: #00d4ff; text-decoration: none; }
+                .modal-author a:hover { text-decoration: underline; }
+                .modal-prompt-label {
+                    color: #00d4ff;
+                    font-size: 13px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                }
+                .modal-prompt {
+                    background: #111;
+                    border: 1px solid #333;
+                    border-radius: 8px;
+                    padding: 16px;
+                    color: #bbb;
+                    font-size: 13px;
+                    line-height: 1.7;
+                    white-space: pre-wrap;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    font-family: Monaco, Menlo, monospace;
+                    margin-bottom: 16px;
+                }
+                .modal-actions {
+                    display: flex;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                }
+
+        @media (max-width: 1200px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 900px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .gallery-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -999,19 +1238,30 @@
                 <span>Prompt Portal</span>
             </div>
             <nav class="header-nav">
+                <div class="header-nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
+                    AI 优化提示词
+                </div>
+                <div class="header-nav-item" :class="{active: currentPage === 'gallery'}" @click="navigate('gallery')">
+                    案例库
+                </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'home'}" @click="navigate('home')">
                     模板库
-                </div>
-                <div class="header-nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
-                    AI 优化生成
                 </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'submit'}" @click="navigate('submit')">
                     提交模板
                 </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'guide'}" @click="navigate('guide')">
-                    编写指南
+                    提示词撰写指南
                 </div>
             </nav>
+            <div style="display:flex;gap:4px;align-items:center;">
+                <button class="btn btn-secondary lang-btn"
+                        :class="{active: language === 'zh'}"
+                        @click="switchLanguage('zh')">中文</button>
+                <button class="btn btn-secondary lang-btn"
+                        :class="{active: language === 'en'}"
+                        @click="switchLanguage('en')">EN</button>
+            </div>
         </header>
         
         <div class="app-container">
@@ -1036,6 +1286,18 @@
                     </div>
                     <div class="category-item" :class="{active: selectedGuide === 'general'}" @click="selectedGuide = 'general'">
                         <span>通用提示词指南</span>
+                    </div>
+                </div>
+                <div class="category-list" v-if="currentPage === 'gallery'">
+                    <div class="category-header">案例分类</div>
+                    <div class="category-item" :class="{active: galleryCategory === ''}" @click="galleryCategory = ''">
+                        <span>全部</span>
+                        <span class="category-count">{{ galleryCases.length }}</span>
+                    </div>
+                    <div class="category-item" v-for="cat in galleryCategories" :key="cat"
+                         :class="{active: galleryCategory === cat}" @click="galleryCategory = cat">
+                        <span>{{ cnLabel('categories', cat) }}</span>
+                        <span class="category-count">{{ galleryCases.filter(c => (c._catOriginal || c.category) === cat).length }}</span>
                     </div>
                 </div>
             </div>
@@ -1078,6 +1340,10 @@
                             <div class="card-meta">
                                 <span class="meta-tag" v-for="s in tpl.styles.slice(0,4)" :key="s">{{ s }}</span>
                                 <span class="meta-tag scene-tag" v-for="sc in tpl.scenes.slice(0,3)" :key="sc">{{ sc }}</span>
+                                <button class="btn btn-secondary" style="padding:3px 10px;font-size:11px;"
+                                        @click.stop="useTemplateInAIFromCard(tpl)">
+                                    使用模板AI生成
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1101,7 +1367,7 @@
                                 <h1 class="template-title" style="margin:0;">{{ isEditing ? '编辑模板' : '模板详情' }} #{{ currentTemplate?.id }}</h1>
                                 <div style="display:flex; gap:10px;">
                                     <button class="btn btn-primary" @click="useTemplateInAI" v-if="!showDeleteConfirm">
-                                        使用模板 → AI 生成
+                                        使用模板改写
                                     </button>
                                     <button v-if="!isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="startEditing">
                                         编辑模板
@@ -1179,12 +1445,9 @@
                             <div class="form-group">
                                 <label class="form-label">风格标签</label>
                                 <div class="tag-selector">
-                                    <span class="tag-chip" v-for="s in allStyles" :key="'ed-s-'+s"
+                                    <span class="tag-chip" v-for="s in [...new Set([...allStyles, ...editStyles])]" :key="'ed-s-'+s"
                                           :class="{active: editStyles.includes(s)}"
                                           @click="toggleEditStyle(s)">{{ s }}</span>
-                                    <span class="tag-chip custom" v-for="s in editStyles" :key="'ed-sc-'+s"
-                                          v-if="!allStyles.includes(s)"
-                                          :class="{active: true}">{{ s }} <i @click.stop="removeEditStyle(s)">x</i></span>
                                     <input type="text" class="tag-input" v-model="newEditStyle"
                                            placeholder="输入新风格标签"
                                            @keydown.enter.prevent="addEditStyle()">
@@ -1194,12 +1457,9 @@
                             <div class="form-group">
                                 <label class="form-label">场景标签</label>
                                 <div class="tag-selector">
-                                    <span class="tag-chip" v-for="sc in allScenes" :key="'ed-sc-'+sc"
+                                    <span class="tag-chip" v-for="sc in [...new Set([...allScenes, ...editScenes])]" :key="'ed-sc-'+sc"
                                           :class="{active: editScenes.includes(sc)}"
                                           @click="toggleEditScene(sc)">{{ sc }}</span>
-                                    <span class="tag-chip custom" v-for="sc in editScenes" :key="'ed-scc-'+sc"
-                                          v-if="!allScenes.includes(sc)"
-                                          :class="{active: true}">{{ sc }} <i @click.stop="removeEditScene(sc)">x</i></span>
                                     <input type="text" class="tag-input" v-model="newEditScene"
                                            placeholder="输入新场景标签"
                                            @keydown.enter.prevent="addEditScene()">
@@ -1358,12 +1618,9 @@
                         <div class="form-group">
                             <label class="form-label">风格标签（点击选择，也可输入新标签）</label>
                             <div class="tag-selector">
-                                <span class="tag-chip" v-for="s in allStyles" :key="'sub-s-'+s"
+                                <span class="tag-chip" v-for="s in [...new Set([...allStyles, ...submitStyles])]" :key="'sub-s-'+s"
                                       :class="{active: submitStyles.includes(s)}"
                                       @click="toggleSubmitStyle(s)">{{ s }}</span>
-                                <span class="tag-chip custom" v-for="s in submitStyles" :key="'sub-sc-'+s"
-                                      v-if="!allStyles.includes(s)"
-                                      :class="{active: true}">{{ s }} <i @click.stop="removeSubmitStyle(s)">x</i></span>
                                 <input type="text" class="tag-input" v-model="newSubmitStyle"
                                        placeholder="输入新风格标签"
                                        @keydown.enter.prevent="addSubmitStyle()">
@@ -1373,12 +1630,9 @@
                         <div class="form-group">
                             <label class="form-label">场景标签（点击选择，也可输入新标签）</label>
                             <div class="tag-selector">
-                                <span class="tag-chip" v-for="sc in allScenes" :key="'sub-sc-'+sc"
+                                <span class="tag-chip" v-for="sc in [...new Set([...allScenes, ...submitScenes])]" :key="'sub-sc-'+sc"
                                       :class="{active: submitScenes.includes(sc)}"
                                       @click="toggleSubmitScene(sc)">{{ sc }}</span>
-                                <span class="tag-chip custom" v-for="sc in submitScenes" :key="'sub-scc-'+sc"
-                                      v-if="!allScenes.includes(sc)"
-                                      :class="{active: true}">{{ sc }} <i @click.stop="removeSubmitScene(sc)">x</i></span>
                                 <input type="text" class="tag-input" v-model="newSubmitScene"
                                        placeholder="输入新场景标签"
                                        @keydown.enter.prevent="addSubmitScene()">
@@ -1725,9 +1979,204 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Gallery Page (Gallery Cases) -->
+                <div v-if="currentPage === 'gallery'">
+                    <div class="page-header">
+                        <h1 class="page-title">案例库</h1>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span class="template-count">
+                                <span v-if="!galleryLoading && galleryCases.length">{{ galleryCases.length }} 个案例 · </span>
+                                来源：
+                                <a href="https://github.com/freestylefly/awesome-gpt-image-2" target="_blank" style="color:#00d4ff;">
+                                    freestylefly/awesome-gpt-image-2
+                                </a>
+                            </span>
+                            <button class="btn btn-primary" style="padding:4px 12px;font-size:12px;margin-right:6px;"
+                                    @click="addNewGalleryCase">+ 添加案例</button>
+                            <button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;"
+                                    @click="syncGallery" :disabled="gallerySyncing">
+                                {{ gallerySyncing ? '同步中...' : '同步数据' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading state -->
+                    <div class="loading" v-if="galleryLoading">
+                        <span class="loading-spinner"></span> 正在加载案例库...
+                    </div>
+
+                    <!-- Error state -->
+                    <div class="error-message" v-else-if="galleryError">{{ galleryError }}</div>
+
+                    <!-- Search & Filter Bar -->
+                    <div class="search-filter-bar" v-else>
+                        <input type="text" class="search-input" v-model="gallerySearchQuery"
+                               placeholder="搜索标题或 Prompt 关键词...">
+                        <div class="filter-tags" v-if="unifiedStyleFilters.length">
+                            <span class="filter-label">风格:</span>
+                            <span class="filter-tag" :class="{active: galleryStyleFilters.includes(s)}"
+                                  v-for="s in unifiedStyleFilters" :key="s" @click="toggleGalleryStyleFilter(s)">{{ s }}</span>
+                            <span class="filter-label" style="margin-left:8px;" v-if="gallerySceneFiltersComp.length">场景:</span>
+                            <span class="filter-tag" :class="{active: gallerySceneFilters.includes(s)}"
+                                  v-for="s in gallerySceneFiltersComp" :key="'sc-'+s" @click="toggleGallerySceneFilter(s)">{{ s }}</span>
+                            <span class="filter-tag clear" v-if="galleryStyleFilters.length || gallerySceneFilters.length || gallerySearchQuery"
+                                  @click="galleryStyleFilters = []; gallerySceneFilters = []; gallerySearchQuery = ''">清除筛选</span>
+                        </div>
+                    </div>
+
+                    <!-- Case grid -->
+                    <div class="gallery-grid" v-if="!galleryLoading && !galleryError">
+                        <div class="case-card" v-for="c in filteredGalleryCases" :key="'gc-' + c.id">
+                            <img class="case-card-img"
+                                 loading="lazy" :src="c.imageUrl"
+                                 :alt="c.title"
+                                 loading="lazy"
+                                 @error="handleCardImageError($event, c)"
+                                 @click="openGalleryCase(c)">
+                            <div class="case-card-body">
+                                <div class="case-card-title-row">
+                                    <div class="case-card-title" @click="openGalleryCase(c)" style="cursor:pointer;">{{ c.title }}</div>
+                                    <span class="case-card-badge">{{ c.categoryShort }}</span>
+                                </div>
+                                <div class="case-card-tags" v-if="c.styles && c.styles.length">
+                                    <span class="case-card-tag" v-for="s in c.styles.slice(0,3)" :key="s">{{ s }}</span>
+                                </div>
+                                <div class="case-card-prompt-box">{{ c.prompt }}</div>
+                                <div class="case-card-footer">
+                                    <div class="case-card-meta">
+                                        <a :href="c.tweetUrl" target="_blank" class="x-link"
+                                           @click.stop>by @{{ c.author }}</a>
+                                    </div>
+                                    <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;"
+                                            @click.stop="copyToClipboard(c.prompt); showToast('已复制!')">
+                                        复制
+                                    </button>
+                                    <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;"
+                                            @click.stop="useGalleryCaseAsTemplate(c)">
+                                        使用模板改写
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="empty-state" v-if="!galleryLoading && !galleryError && !filteredGalleryCases.length">
+                        <p>该分类下暂无案例</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Case Modal -->
+                <div class="modal-overlay" v-if="galleryModalCase" @click.self="galleryModalCase = null">
+                    <div class="modal-content">
+                        <div class="modal-close">
+                            <span style="font-size:14px;color:#888;">
+                                {{ galleryModalCase.category }} · {{ galleryModalCase.sourceLabel || '' }}
+                            </span>
+                            <div style="display:flex;gap:8px;">
+                                <button v-if="!galleryEditMode" class="modal-close-btn" @click="startEditGalleryCase(galleryModalCase)">编辑</button>
+                                <button v-if="galleryEditMode" class="modal-close-btn" style="background:#00aa55;" @click="saveGalleryEdit">保存</button>
+                                <button v-if="galleryEditMode" class="modal-close-btn" @click="cancelGalleryEdit">取消</button>
+                                <button class="modal-close-btn" @click="galleryModalCase = null">关闭</button>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <template v-if="!galleryEditMode">
+                                <img class="modal-img" :src="galleryModalCase.imageUrl" :alt="galleryModalCase.title"
+                                     @error="handleModalImageError($event)">
+                                <div class="modal-title">{{ galleryModalCase.title }}</div>
+                                <div class="modal-author" v-if="galleryModalCase.githubUrl">
+                                    <a :href="galleryModalCase.githubUrl" target="_blank" style="color:#00d4ff;">
+                                        查看源码 (GitHub)
+                                    </a>
+                                    <span v-if="galleryModalCase.sourceLabel" style="color:#666;margin-left:8px;">via {{ galleryModalCase.sourceLabel }}</span>
+                                </div>
+                                <div class="card-meta" style="margin-bottom:12px;" v-if="galleryModalCase.styles?.length || galleryModalCase.scenes?.length">
+                                    <span class="meta-tag" v-for="s in galleryModalCase.styles" :key="'vm-s-'+s">{{ s }}</span>
+                                    <span class="meta-tag scene-tag" v-for="sc in galleryModalCase.scenes" :key="'vm-sc-'+sc">{{ sc }}</span>
+                                </div>
+                                <div class="modal-prompt-label">Prompt</div>
+                                <div class="modal-prompt">{{ galleryModalCase.prompt }}</div>
+                                <div class="modal-actions">
+                                    <button class="btn btn-primary" @click="useGalleryCaseAsTemplate(galleryModalCase)">
+                                        使用模板改写
+                                    </button>
+                                    <button class="btn btn-secondary" @click="copyToClipboard(galleryModalCase.prompt); showToast('已复制!')">
+                                        复制 Prompt
+                                    </button>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="form-group">
+                                    <label class="form-label">标题</label>
+                                    <input type="text" class="form-input" v-model="galleryEditForm.title">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">分类</label>
+                                    <select class="form-select" v-model="galleryEditForm.category">
+                                        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                                        <option v-for="cat in galleryCategories" :key="'gc-'+cat" :value="cat">{{ cat }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">风格标签（点击选择，也可输入新标签）</label>
+                                    <div class="tag-selector">
+                                        <span class="tag-chip" v-for="s in [...new Set([...unifiedStyleFilters, ...galleryEditStyles])]" :key="'ge-s-'+s"
+                                              :class="{active: galleryEditStyles.includes(s)}"
+                                              @click="toggleGalleryEditStyle(s)">{{ s }}</span>
+                                        <input type="text" class="tag-input" v-model="galleryEditNewStyle"
+                                               placeholder="输入新风格标签"
+                                               @keydown.enter.prevent="addGalleryEditStyle()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">场景标签</label>
+                                    <div class="tag-selector">
+                                        <span class="tag-chip" v-for="s in [...new Set([...gallerySceneFiltersComp, ...galleryEditScenes])]" :key="'ge-sc-'+s"
+                                              :class="{active: galleryEditScenes.includes(s)}"
+                                              @click="toggleGalleryEditScene(s)">{{ s }}</span>
+                                        <input type="text" class="tag-input" v-model="galleryEditNewScene"
+                                               placeholder="输入新场景标签"
+                                               @keydown.enter.prevent="addGalleryEditScene()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">图片</label>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                        <input type="text" class="form-input" v-model="galleryEditForm.imageUrl"
+                                               :placeholder="galleryModalCase?.imageUrl || '图片URL'" style="margin-bottom:0;">
+                                        <input type="file" id="gallery-image-upload" accept="image/*"
+                                               style="display:none;" @change="uploadGalleryImage">
+                                        <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;white-space:nowrap;"
+                                                @click="document.getElementById('gallery-image-upload').click()">选择文件</button>
+                                        <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;white-space:nowrap;"
+                                                @click="uploadGalleryImage" :disabled="galleryUploading">
+                                            {{ galleryUploading ? '上传中...' : '上传' }}
+                                        </button>
+                                    </div>
+                                    <img v-if="galleryEditForm.imageUrl" :src="galleryEditForm.imageUrl"
+                                         style="max-width:200px;max-height:200px;border-radius:8px;background:#111;"
+                                         @error="$event.target.style.display='none'">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Prompt</label>
+                                    <textarea class="form-textarea" v-model="galleryEditForm.prompt" style="height:200px;"></textarea>
+                                </div>
+                                <div style="display:flex;gap:10px;margin-top:12px;">
+                                    <button v-if="!galleryEditDeleting" class="btn btn-danger" style="font-size:12px;" @click="galleryEditDeleting = true">删除此案例</button>
+                                    <button v-if="galleryEditDeleting" class="btn btn-danger" @click="deleteGalleryCase" :disabled="galleryEditDeleting > 1">
+                                        {{ galleryEditDeleting > 1 ? '删除中...' : '确认删除' }}
+                                    </button>
+                                    <button v-if="galleryEditDeleting" class="btn btn-secondary" style="font-size:12px;" @click="galleryEditDeleting = false">取消</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        
+
         <!-- Toast -->
         <div class="toast" :class="{show: toast.show}">{{ toast.message }}</div>
     </div>
@@ -1791,6 +2240,26 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                 const newSubmitStyle = ref('');
                 const newSubmitScene = ref('');
 
+                // Gallery (gallery cases)
+                const galleryCases = ref([]);
+                const galleryLoading = ref(false);
+                const galleryError = ref(null);
+                const galleryCategory = ref('');
+                const galleryModalCase = ref(null);
+                const galleryStyleFilters = ref([]);
+                const gallerySceneFilters = ref([]);
+                const galleryEditMode = ref(false);
+                const galleryEditForm = ref({ title: '', category: '', prompt: '' });
+                const galleryEditStyles = ref([]);
+                const galleryEditScenes = ref([]);
+                const galleryEditNewStyle = ref('');
+                const galleryEditNewScene = ref('');
+                const galleryEditDeleting = ref(false);
+                const galleryUploading = ref(false);
+                const gallerySearchQuery = ref('');
+                const language = ref(localStorage.getItem('ui_language') || 'zh');
+                const gallerySyncing = ref(false);
+
                 // Computed: all unique styles/scenes/categories
                 const allStyles = computed(() => {
                     const s = new Set();
@@ -1801,6 +2270,77 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     const s = new Set();
                     templates.value.forEach(t => t.scenes?.forEach(x => s.add(x)));
                     return [...s].sort();
+                });
+                // CN/EN display label mappings
+                const CN_LABELS = {
+                    categories: {
+                        'Architecture & Spaces': '建筑与空间', 'Brand & Logos': '品牌与Logo',
+                        'Characters & People': '角色与人物', 'Charts & Infographics': '图表与信息图',
+                        'Documents & Publishing': '文档与出版', 'History & Classical Themes': '历史与古典主题',
+                        'Illustration & Art': '插画与艺术', 'Other Use Cases': '其他用例',
+                        'Photography & Realism': '摄影与写实', 'Posters & Typography': '海报与排版',
+                        'Products & E-commerce': '产品与电商', 'Scenes & Storytelling': '场景与叙事',
+                        'UI & Interfaces': 'UI与界面',
+                    },
+                    styles: {
+                        '3D': '3D', 'Architecture': '建筑', 'Brand': '品牌', 'Character': '角色',
+                        'Characters': '角色', 'Charts': '图表', 'Classical': '古典', 'Documents': '文档',
+                        'History': '历史', 'Illustration': '插画', 'Infographic': '信息图',
+                        'Other Use Cases': '其他', 'Photography': '摄影', 'Poster': '海报',
+                        'Product': '产品', 'Products': '产品', 'Realistic': '写实', 'Scenes': '场景', 'UI': 'UI',
+                    },
+                    scenes: {
+                        'Commerce': '商业', 'Creative': '创意', 'Education': '教育', 'Fashion': '时尚',
+                        'Food': '美食', 'History': '历史', 'Social': '社交', 'Story': '叙事',
+                        'Tech': '科技', 'Travel': '旅行',
+                    }
+                };
+                function cnLabel(map, key) { return (language.value === 'zh' && CN_LABELS[map][key]) || key; }
+
+                const galleryCategories = computed(() => {
+                    const cats = [...new Set(galleryCases.value.map(c => c._catOriginal || c.category))];
+                    return cats.sort();
+                });
+                const galleryStyleFiltersComp = computed(() => {
+                    const s = new Set();
+                    galleryCases.value.forEach(c => c.styles?.forEach(x => s.add(x)));
+                    return [...s].sort();
+                });
+                const gallerySceneFiltersComp = computed(() => {
+                    const s = new Set();
+                    galleryCases.value.forEach(c => c.scenes?.forEach(x => s.add(x)));
+                    return [...s].sort();
+                });
+                // Unified tag pool: template styles + case styles
+                const unifiedStyleFilters = computed(() => {
+                    const s = new Set();
+                    allStyles.value.forEach(x => s.add(x));
+                    galleryStyleFiltersComp.value.forEach(x => s.add(x));
+                    return [...s].sort();
+                });
+                const filteredGalleryCases = computed(() => {
+                    let result = galleryCases.value;
+                    if (galleryCategory.value) {
+                        result = result.filter(c => (c._catOriginal || c.category) === galleryCategory.value);
+                    }
+                    if (gallerySceneFilters.value.length) {
+                        result = result.filter(c =>
+                            gallerySceneFilters.value.some(s => c.scenes?.includes(s))
+                        );
+                    }
+                    if (galleryStyleFilters.value.length) {
+                        result = result.filter(c =>
+                            galleryStyleFilters.value.some(s => c.styles?.includes(s))
+                        );
+                    }
+                    if (gallerySearchQuery.value.trim()) {
+                        const q = gallerySearchQuery.value.toLowerCase();
+                        result = result.filter(c =>
+                            (c.title && c.title.toLowerCase().includes(q)) ||
+                            (c.prompt && c.prompt.toLowerCase().includes(q))
+                        );
+                    }
+                    return result;
                 });
                 const allCategories = computed(() => categories.value);
 
@@ -1879,9 +2419,13 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     matchResult.value = null;
                     matchError.value = null;
                     submitSuccess.value = false;
+                    galleryModalCase.value = null;
                     if (page !== 'match') {
                         conversation.value = [];
                         templateRefForAI.value = null;
+                    }
+                    if (page === 'gallery' && !galleryCases.value.length && !galleryLoading.value) {
+                        loadGalleryCases();
                     }
                     window.location.hash = page;
                 }
@@ -2059,6 +2603,50 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     deleting.value = false;
                 }
                 
+                async function submitTemplate() {
+                    // Validate
+                    const missing = [];
+                    if (!submitForm.value.title.trim()) missing.push('标题');
+                    if (!submitForm.value.category) missing.push('分类');
+                    if (!submitForm.value.prompt.trim()) missing.push('Prompt');
+                    if (!submitStyles.value.length) missing.push('风格标签');
+                    if (!submitScenes.value.length) missing.push('场景标签');
+                    if (missing.length) {
+                        submitError.value = '请填写：' + missing.join('、');
+                        return;
+                    }
+                    submitError.value = '';
+                    submitting.value = true;
+                    try {
+                        const body = {
+                            title: submitForm.value.title,
+                            prompt: submitForm.value.prompt,
+                            category: submitForm.value.category,
+                            styles: submitStyles.value,
+                            scenes: submitScenes.value,
+                            description: submitForm.value.description,
+                        };
+                        const res = await fetch(`${API_BASE}/api/templates/submit`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        });
+                        if (!res.ok) throw new Error(`API error: ${res.status}`);
+                        const data = await res.json();
+                        templates.value.push(data.template);
+                        submitSuccess.value = true;
+                        showToast('提交成功! 已加入模板库');
+                        submitForm.value = { title: '', prompt: '', category: '', description: '' };
+                        submitStyles.value = [];
+                        submitScenes.value = [];
+                        setTimeout(() => { submitSuccess.value = false; }, 3000);
+                    } catch (e) {
+                        console.error('Submit failed:', e);
+                        showToast('提交失败');
+                    }
+                    submitting.value = false;
+                }
+
                 async function doMatch() {
                     if (!matchInput.value.trim()) return;
                     matching.value = true;
@@ -2089,7 +2677,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         matchInput.value = '';
                     } catch (e) {
                         console.error('Match failed:', e);
-                        matchError.value = 'AI 服务暂时不可用，请稍后重试。';
+                        matchError.value = 'AI 服务暂时不可用：' + (e.message || '网络异常，请稍后重试');
                     }
                     matching.value = false;
                 }
@@ -2112,6 +2700,24 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         styles: currentTemplate.value.styles,
                         scenes: currentTemplate.value.scenes,
                         description: currentTemplate.value.description,
+                    };
+                    matchInput.value = '';
+                    currentPage.value = 'match';
+                    window.location.hash = 'match';
+                }
+
+                function useTemplateInAIFromCard(tpl) {
+                    // Load full template data then call useTemplateInAI
+                    populateEditForm(tpl);
+                    resetConversation();
+                    templateRefForAI.value = {
+                        id: tpl.id,
+                        title: tpl.title,
+                        prompt: tpl.prompt,
+                        category: tpl.category,
+                        styles: tpl.styles,
+                        scenes: tpl.scenes,
+                        description: tpl.description,
                     };
                     matchInput.value = '';
                     currentPage.value = 'match';
@@ -2158,60 +2764,329 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         setTimeout(() => copyOptimizedSuccess.value = false, 2000);
                     }
                 }
-                
-                async function submitTemplate() {
-                    // Validate
-                    const missing = [];
-                    if (!submitForm.value.title.trim()) missing.push('标题');
-                    if (!submitForm.value.category) missing.push('分类');
-                    if (!submitForm.value.prompt.trim()) missing.push('Prompt');
-                    if (!submitStyles.value.length) missing.push('风格标签');
-                    if (!submitScenes.value.length) missing.push('场景标签');
-                    if (missing.length) {
-                        submitError.value = '请填写：' + missing.join('、');
-                        return;
+
+                // Gallery: load local cached gallery cases from backend API
+                async function loadGalleryCases() {
+                    galleryLoading.value = true;
+                    galleryError.value = null;
+                    try {
+                        const res = await fetch(API_BASE + '/api/gallery');
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const data = await res.json();
+                        if (data.error) {
+                            // gallery_data.json not synced yet — offer remote fallback
+                            loadGalleryCasesRemote();
+                            return;
+                        }
+                        galleryCases.value = (data.cases || []).map(c => {
+                            const prompt = c.prompt || '';
+                            // Parse bilingual prompts: split on CN/EN delimiter
+                            let promptCn = prompt, promptEn = prompt, isBilingual = false;
+                            const delims = ['\n英文版：\n', '\n---\n', '\nEnglish:\n'];
+                            for (const d of delims) {
+                                const idx = prompt.indexOf(d);
+                                if (idx >= 0) {
+                                    promptCn = prompt.substring(0, idx).trim();
+                                    promptEn = prompt.substring(idx + d.length).trim();
+                                    isBilingual = true;
+                                    break;
+                                }
+                            }
+                            return {
+                                id: c.id,
+                                title: c.title || 'Untitled',
+                                category: c.category || 'Other',
+                                imageUrl: '/api/gallery/images/case' + c.id + (c.image || '.jpg').match(/\.[a-z]+$/)[0],
+                                githubImageUrl: 'https://raw.githubusercontent.com/freestylefly/awesome-gpt-image-2/main/data/images/case' + c.id + '.jpg',
+                                prompt: language.value === 'zh' ? promptCn : promptEn,
+                                promptCn: isBilingual ? promptCn : undefined,
+                                promptEn: isBilingual ? promptEn : undefined,
+                                styles: c.styles || [],
+                                scenes: c.scenes || [],
+                                sourceLabel: c.sourceLabel || '',
+                                sourceUrl: c.sourceUrl || '',
+                                githubUrl: c.githubUrl || '',
+                            };
+                        });
+                        // Load translations for non-bilingual prompts
+                        try {
+                            const tres = await fetch(API_BASE + '/api/gallery/translations');
+                            if (tres.ok) {
+                                const translations = await tres.json();
+                                galleryCases.value.forEach(c => {
+                                    const tr = translations[String(c.id)];
+                                    if (tr) {
+                                        if (tr.prompt_cn && !c.promptCn) c.promptCn = tr.prompt_cn;
+                                        if (tr.prompt_en && !c.promptEn) c.promptEn = tr.prompt_en;
+                                    }
+                                });
+                            }
+                        } catch {}
+                        // Apply language display after translations are loaded
+                        switchLanguage(language.value);
+                    } catch (e) {
+                        galleryError.value = '加载案例库失败，请稍后重试。';
+                        console.error('Gallery load error:', e);
                     }
-                    submitError.value = '';
-                    submitting.value = true;
+                    galleryLoading.value = false;
+                }
+
+                // Remote fallback when local data not yet synced
+                async function loadGalleryCasesRemote() {
+                    try {
+                        const res = await fetch('https://raw.githubusercontent.com/freestylefly/awesome-gpt-image-2/main/data/cases.json');
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const data = await res.json();
+                        galleryCases.value = (data.cases || []).map(c => ({
+                            id: c.id,
+                            title: c.title || 'Untitled',
+                            category: c.category || 'Other',
+                            imageUrl: '/api/gallery/images/case' + c.id + (c.image || '.jpg').match(/\.[a-z]+$/)[0],
+                            githubImageUrl: 'https://raw.githubusercontent.com/freestylefly/awesome-gpt-image-2/main/data/images/case' + c.id + '.jpg',
+                            prompt: c.prompt || '',
+                            styles: c.styles || [],
+                            scenes: c.scenes || [],
+                        }));
+                    } catch (e) {
+                        galleryError.value = '加载案例库失败，请稍后重试。';
+                        console.error('Gallery remote fallback error:', e);
+                    }
+                    galleryLoading.value = false;
+                }
+
+
+                function toggleGalleryStyleFilter(s) {
+                    const idx = galleryStyleFilters.value.indexOf(s);
+                    if (idx >= 0) galleryStyleFilters.value.splice(idx, 1);
+                    else galleryStyleFilters.value.push(s);
+                }
+                function toggleGallerySceneFilter(s) {
+                    const idx = gallerySceneFilters.value.indexOf(s);
+                    if (idx >= 0) gallerySceneFilters.value.splice(idx, 1);
+                    else gallerySceneFilters.value.push(s);
+                }
+                function startEditGalleryCase(c) {
+                    galleryEditForm.value = { title: c.title || '', category: c._catOriginal || c.category || '', prompt: c.prompt || '' };
+                    galleryEditStyles.value = [...(c.styles || [])];
+                    galleryEditScenes.value = [...(c.scenes || [])];
+                    galleryEditMode.value = true;
+                }
+                async function saveGalleryEdit() {
+                    const c = galleryModalCase.value;
+                    if (!c) return;
                     try {
                         const body = {
-                            title: submitForm.value.title,
-                            prompt: submitForm.value.prompt,
-                            category: submitForm.value.category,
-                            styles: submitStyles.value,
-                            scenes: submitScenes.value,
-                            description: submitForm.value.description,
+                            title: galleryEditForm.value.title,
+                            category: galleryEditForm.value.category,
+                            prompt: galleryEditForm.value.prompt,
+                            styles: galleryEditStyles.value,
+                            scenes: galleryEditScenes.value,
                         };
-                        const res = await fetch(`${API_BASE}/api/templates/submit`, {
-                            method: 'POST',
+                        const isNew = !c.id;
+                        const method = isNew ? 'POST' : 'PUT';
+                        const url = isNew ? `${API_BASE}/api/gallery/cases` : `${API_BASE}/api/gallery/cases/${c.id}`;
+                        const res = await fetch(url, {
+                            method,
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(body)
                         });
-                        if (!res.ok) throw new Error(`API error: ${res.status}`);
-                        const data = await res.json();
-                        templates.value.push(data.template);
-                        submitSuccess.value = true;
-                        showToast('提交成功! 已加入模板库');
-                        submitForm.value = { title: '', prompt: '', category: '', description: '' };
-                        submitStyles.value = [];
-                        submitScenes.value = [];
-                        setTimeout(() => { submitSuccess.value = false; }, 3000);
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const result = await res.json();
+                        const updated = result.case || result;
+                        if (isNew) {
+                            // Add to local list
+                            galleryCases.value.push({
+                                id: updated.id, title: updated.title, category: updated.category,
+                                prompt: updated.prompt, styles: updated.styles || [], scenes: updated.scenes || [],
+                                imageUrl: '/api/gallery/images/case' + updated.id + '.jpg',
+                                githubImageUrl: '', sourceLabel: '', sourceUrl: '', githubUrl: '',
+                                _catOriginal: updated.category, _stylesOriginal: updated.styles, _scenesOriginal: updated.scenes,
+                            });
+                        } else {
+                            c.title = updated.title;
+                            c.category = updated.category;
+                            c.prompt = updated.prompt;
+                            c.styles = updated.styles || [];
+                            c.scenes = updated.scenes || [];
+                            c._catOriginal = updated.category;
+                        }
+                        showToast('已保存到服务器');
                     } catch (e) {
-                        console.error('Submit failed:', e);
-                        showToast('提交失败');
+                        console.error('Save failed:', e);
+                        showToast('保存失败: ' + e.message);
                     }
-                    submitting.value = false;
+                    galleryEditMode.value = false;
                 }
-                
+                function cancelGalleryEdit() {
+                    galleryEditMode.value = false;
+                    galleryEditDeleting.value = false;
+                }
+                async function uploadGalleryImage() {
+                    const input = document.getElementById('gallery-image-upload');
+                    if (!input || !input.files || !input.files.length) return;
+                    const file = input.files[0];
+                    galleryUploading.value = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        const res = await fetch(API_BASE + '/api/gallery/upload', { method: 'POST', body: formData });
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const data = await res.json();
+                        galleryEditForm.value.imageUrl = data.url;
+                        showToast('图片上传成功');
+                    } catch (e) {
+                        console.error('Upload failed:', e);
+                        showToast('上传失败');
+                    }
+                    galleryUploading.value = false;
+                    input.value = '';
+                }
+                async function deleteGalleryCase() {
+                    const c = galleryModalCase.value;
+                    if (!c) return;
+                    galleryEditDeleting.value = 2; // loading state
+                    try {
+                        const res = await fetch(`${API_BASE}/api/gallery/cases/${c.id}`, { method: 'DELETE' });
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        galleryCases.value = galleryCases.value.filter(x => x.id !== c.id);
+                        galleryModalCase.value = null;
+                        galleryEditMode.value = false;
+                        galleryEditDeleting.value = false;
+                        showToast('案例已删除');
+                    } catch (e) {
+                        console.error('Delete failed:', e);
+                        showToast('删除失败: ' + e.message);
+                        galleryEditDeleting.value = false;
+                    }
+                }
+                function addNewGalleryCase() {
+                    galleryEditForm.value = { title: '', category: '', prompt: '', imageUrl: '' };
+                    galleryEditStyles.value = [];
+                    galleryEditScenes.value = [];
+                    galleryEditDeleting.value = false;
+                    galleryModalCase.value = { id: null, title: '新案例', prompt: '', category: '', styles: [], scenes: [], imageUrl: '', sourceLabel: '', sourceUrl: '', githubUrl: '' };
+                    galleryEditMode.value = true;
+                }
+                function toggleGalleryEditStyle(s) {
+                    const idx = galleryEditStyles.value.indexOf(s);
+                    if (idx >= 0) galleryEditStyles.value.splice(idx, 1);
+                    else galleryEditStyles.value.push(s);
+                }
+                function toggleGalleryEditScene(s) {
+                    const idx = galleryEditScenes.value.indexOf(s);
+                    if (idx >= 0) galleryEditScenes.value.splice(idx, 1);
+                    else galleryEditScenes.value.push(s);
+                }
+                function removeGalleryEditStyle(s) { galleryEditStyles.value = galleryEditStyles.value.filter(x => x !== s); }
+                function removeGalleryEditScene(s) { galleryEditScenes.value = galleryEditScenes.value.filter(x => x !== s); }
+                function addGalleryEditStyle() {
+                    const v = galleryEditNewStyle.value.trim();
+                    if (v && !galleryEditStyles.value.includes(v)) galleryEditStyles.value.push(v);
+                    galleryEditNewStyle.value = '';
+                }
+                function addGalleryEditScene() {
+                    const v = galleryEditNewScene.value.trim();
+                    if (v && !galleryEditScenes.value.includes(v)) galleryEditScenes.value.push(v);
+                    galleryEditNewScene.value = '';
+                }
+                function openGalleryCase(c) {
+                    galleryEditMode.value = false;
+                    galleryModalCase.value = c;
+                }
+
+                async function syncGallery() {
+                    gallerySyncing.value = true;
+                    try {
+                        const res = await fetch(API_BASE + '/api/gallery/sync', { method: 'POST' });
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const result = await res.json();
+                        showToast(`同步完成：${result.total} 个案例（新增 ${result.added}，移除 ${result.removed}）`);
+                        // Reload cases
+                        galleryCases.value = [];
+                        await loadGalleryCases();
+                    } catch (e) {
+                        console.error('Sync failed:', e);
+                        showToast('同步失败，请稍后重试');
+                    }
+                    gallerySyncing.value = false;
+                }
+
+                // Extract style keywords from prompt text for filtering
+
+
+                function handleCardImageError(e, c) {
+                    if (e.target.src !== c.githubImageUrl) e.target.src = c.githubImageUrl;
+                }
+                function handleModalImageError(e) {
+                    const c = galleryModalCase.value;
+                    if (c && e.target.src !== c.githubImageUrl) e.target.src = c.githubImageUrl;
+                }
+
+                // Language / translation
+                function switchLanguage(lang) {
+                    language.value = lang;
+                    localStorage.setItem('ui_language', lang);
+                    // Swap prompt language for bilingual cases
+                    galleryCases.value.forEach(c => {
+                        if (lang === 'zh' && c.promptCn !== undefined) {
+                            c.prompt = c.promptCn;
+                        } else if (lang === 'en' && c.promptEn !== undefined) {
+                            c.prompt = c.promptEn;
+                        }
+                        // Translate category
+                        if (lang === 'zh' && CN_LABELS.categories[c._catOriginal || c.category]) {
+                            if (!c._catOriginal) c._catOriginal = c.category;
+                            c.category = CN_LABELS.categories[c._catOriginal];
+                        } else if (lang === 'en' && c._catOriginal) {
+                            c.category = c._catOriginal;
+                        }
+                        // Translate styles
+                        if (!c._stylesOriginal) c._stylesOriginal = [...(c.styles || [])];
+                        if (lang === 'zh') {
+                            c.styles = c._stylesOriginal.map(s => CN_LABELS.styles[s] || s);
+                        } else {
+                            c.styles = [...c._stylesOriginal];
+                        }
+                        // Translate scenes
+                        if (!c._scenesOriginal) c._scenesOriginal = [...(c.scenes || [])];
+                        if (lang === 'zh') {
+                            c.scenes = c._scenesOriginal.map(s => CN_LABELS.scenes[s] || s);
+                        } else {
+                            c.scenes = [...c._scenesOriginal];
+                        }
+                    });
+                }
+                // Use gallery case as a template reference in AI match page
+                function useGalleryCaseAsTemplate(c) {
+                    resetConversation();
+                    templateRefForAI.value = {
+                        id: null,
+                        title: c.title,
+                        prompt: c.prompt,
+                        category: c.category || '',
+                        styles: c.styles || [],
+                        scenes: [],
+                        description: '来自案例库: ' + c.title,
+                    };
+                    matchInput.value = '';
+                    galleryModalCase.value = null;
+                    currentPage.value = 'match';
+                    window.location.hash = 'match';
+                }
+
                 function handleHashChange() {
                     const hash = window.location.hash.slice(1);
+                    galleryModalCase.value = null;
                     if (hash.startsWith('edit/')) {
                         const id = parseInt(hash.split('/')[1]);
                         editTemplate(id);
-                    } else if (['home', 'match', 'submit', 'guide'].includes(hash)) {
+                    } else if (['home', 'match', 'submit', 'guide', 'gallery'].includes(hash)) {
+                        if (hash === 'gallery' && !galleryCases.value.length && !galleryLoading.value) {
+                            loadGalleryCases();
+                        }
                         currentPage.value = hash;
                     } else {
-                        currentPage.value = 'home';
+                        currentPage.value = 'match';
                     }
                 }
                 
@@ -2279,6 +3154,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     templateRefForAI,
                     resetConversation,
                     useTemplateInAI,
+                    useTemplateInAIFromCard,
                     copyConvPrompt,
                     submitTemplate,
                     toggleStyle,
@@ -2300,7 +3176,51 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     addEditScene,
                     startEditing,
                     generateImage,
-                };
+                    galleryCases,
+                    galleryLoading,
+                    galleryError,
+                    galleryCategory,
+                    galleryModalCase,
+                    galleryCategories,
+                    filteredGalleryCases,
+                    openGalleryCase,
+                    unifiedStyleFilters,
+                    galleryStyleFilters,
+                    galleryStyleFiltersComp,
+                    gallerySearchQuery,
+                    gallerySceneFilters,
+                    gallerySceneFiltersComp,
+                    toggleGalleryStyleFilter,
+                    toggleGallerySceneFilter,
+                    galleryEditMode,
+                    galleryEditForm,
+                    galleryEditStyles,
+                    galleryEditScenes,
+                    galleryEditNewStyle,
+                    galleryEditNewScene,
+                    galleryEditDeleting,
+                    galleryUploading,
+                    startEditGalleryCase,
+                    saveGalleryEdit,
+                    cancelGalleryEdit,
+                    toggleGalleryEditStyle,
+                    toggleGalleryEditScene,
+                    removeGalleryEditStyle,
+                    removeGalleryEditScene,
+                    addGalleryEditStyle,
+                    addGalleryEditScene,
+                    uploadGalleryImage,
+                    deleteGalleryCase,
+                    addNewGalleryCase,
+                    useGalleryCaseAsTemplate,
+                    handleCardImageError,
+                    handleModalImageError,
+                    gallerySyncing,
+                    syncGallery,
+                    language,
+                    cnLabel,
+                    switchLanguage,
+                                    };
             }
         }).mount('#app');
     </script>
