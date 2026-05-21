@@ -1,10 +1,14 @@
 import os
 import json
+import time
+import hmac
+import hashlib
+import base64
 import httpx
 from dotenv import load_dotenv
 load_dotenv()
 from typing import Optional, List, Dict, Any
-from fastapi import FastAPI, HTTPException, Query, UploadFile, File as FastAPIFile
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File as FastAPIFile, Header, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -25,6 +29,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ── Auth ─────────────────────────────────────────────────
+AUTH_PASSWORD = os.getenv("AUTH_PASSWORD", "admin123")
+AUTH_SECRET = os.getenv("AUTH_SECRET", os.urandom(32).hex())
+TOKEN_TTL = 86400  # 24 hours
+
+def _sign(data: str) -> str:
+    return hmac.new(AUTH_SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
+
+def create_token(username: str) -> str:
+    exp = int(time.time()) + TOKEN_TTL
+    payload = f"{username}:{exp}"
+    sig = _sign(payload)
+    token = base64.urlsafe_b64encode(f"{payload}:{sig}".encode()).decode()
+    return token
+
+def verify_token(token: str) -> Optional[str]:
+    try:
+        decoded = base64.urlsafe_b64decode(token.encode()).decode()
+        parts = decoded.rsplit(":", 1)
+        if len(parts) != 2:
+            return None
+        payload, sig = parts
+        if not hmac.compare_digest(_sign(payload), sig):
+            return None
+        username, exp_str = payload.split(":", 1)
+        if int(exp_str) < time.time():
+            return None
+        return username
+    except Exception:
+        return None
+
+def require_auth(authorization: Optional[str] = Header(None)) -> str:
+    if not AUTH_PASSWORD or AUTH_PASSWORD == "admin123":
+        return "admin"  # No auth configured — allow all
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="请先登录")
+    username = verify_token(authorization[7:])
+    if not username:
+        raise HTTPException(status_code=401, detail="登录已过期，请重新登录")
+    return username
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+# ── Data ─────────────────────────────────────────────────
 DATA_FILE = os.path.join(os.path.dirname(__file__), "prompts_data.json")
 
 
@@ -65,6 +115,18 @@ class UpdateRequest(BaseModel):
     description: Optional[str] = None
 
 
+@app.post("/api/auth/login")
+def login(request: LoginRequest) -> Dict[str, Any]:
+    if request.password != AUTH_PASSWORD:
+        raise HTTPException(status_code=401, detail="密码错误")
+    token = create_token(request.username or "admin")
+    return {"token": token, "username": request.username or "admin"}
+
+@app.get("/api/auth/check")
+def check_auth(username: str = Depends(require_auth)) -> Dict[str, str]:
+    return {"username": username}
+
+
 @app.get("/api/templates")
 def get_templates(category: Optional[str] = Query(None)) -> List[Dict[str, Any]]:
     templates = load_templates()
@@ -83,7 +145,7 @@ def get_template(template_id: int) -> Dict[str, Any]:
 
 
 @app.put("/api/templates/{template_id}")
-def update_template(template_id: int, request: UpdateRequest) -> Dict[str, Any]:
+def update_template(template_id: int, request: UpdateRequest, username: str = Depends(require_auth)) -> Dict[str, Any]:
     templates = load_templates()
     for i, t in enumerate(templates):
         if t.get("id") == template_id:
@@ -95,7 +157,7 @@ def update_template(template_id: int, request: UpdateRequest) -> Dict[str, Any]:
 
 
 @app.delete("/api/templates/{template_id}")
-def delete_template(template_id: int) -> Dict[str, Any]:
+def delete_template(template_id: int, username: str = Depends(require_auth)) -> Dict[str, Any]:
     templates = load_templates()
     for i, t in enumerate(templates):
         if t.get("id") == template_id:
@@ -124,7 +186,7 @@ async def match_template(request: MatchRequest) -> Dict[str, Any]:
 
 
 @app.post("/api/templates/submit")
-def submit_template(request: SubmitRequest) -> Dict[str, Any]:
+def submit_template(request: SubmitRequest, username: str = Depends(require_auth)) -> Dict[str, Any]:
     templates = load_templates()
     new_id = max([t.get("id", 0) for t in templates], default=0) + 1
 
@@ -201,7 +263,7 @@ NEW_REPO_RAW = "https://raw.githubusercontent.com/freestylefly/awesome-gpt-image
 
 
 @app.post("/api/gallery/sync")
-async def sync_gallery():
+async def sync_gallery(username: str = Depends(require_auth)):
     """
     Sync gallery data from the upstream GitHub repo (freestylefly/awesome-gpt-image-2).
     Fetches cases.json and downloads images.
@@ -309,7 +371,7 @@ async def upload_gallery_image(file: UploadFile = FastAPIFile(...)):
 
 
 @app.put("/api/gallery/cases/{case_id}")
-def update_gallery_case(case_id: int, request: UpdateRequest):
+def update_gallery_case(case_id: int, request: UpdateRequest, username: str = Depends(require_auth)):
     """Update a gallery case and persist to gallery_data.json."""
     gallery_file = DATA_DIR / "gallery_data.json"
     if not gallery_file.exists():
@@ -329,7 +391,7 @@ def update_gallery_case(case_id: int, request: UpdateRequest):
 
 
 @app.delete("/api/gallery/cases/{case_id}")
-def delete_gallery_case(case_id: int):
+def delete_gallery_case(case_id: int, username: str = Depends(require_auth)):
     """Delete a gallery case and persist."""
     gallery_file = DATA_DIR / "gallery_data.json"
     if not gallery_file.exists():
@@ -348,7 +410,7 @@ def delete_gallery_case(case_id: int):
 
 
 @app.post("/api/gallery/cases")
-def add_gallery_case(request: SubmitRequest):
+def add_gallery_case(request: SubmitRequest, username: str = Depends(require_auth)):
     """Add a new gallery case, reusing vacant IDs when possible."""
     gallery_file = DATA_DIR / "gallery_data.json"
     if not gallery_file.exists():

@@ -1257,13 +1257,18 @@
                     提示词撰写指南
                 </div>
             </nav>
-            <div style="display:flex;gap:4px;align-items:center;">
+            <div style="display:flex;gap:6px;align-items:center;">
                 <button class="btn btn-secondary lang-btn"
                         :class="{active: language === 'zh'}"
                         @click="switchLanguage('zh')">中文</button>
                 <button class="btn btn-secondary lang-btn"
                         :class="{active: language === 'en'}"
                         @click="switchLanguage('en')">EN</button>
+                <button v-if="!authToken" class="btn btn-secondary" style="padding:4px 12px;font-size:12px;"
+                        @click="showLogin = true">登录</button>
+                <span v-if="authToken" style="font-size:12px;color:#6bcb77;">{{ authUsername }}</span>
+                <button v-if="authToken" class="btn btn-secondary" style="padding:2px 8px;font-size:11px;"
+                        @click="logout">退出</button>
             </div>
         </header>
         
@@ -1372,13 +1377,13 @@
                                     <button class="btn btn-primary" @click="useTemplateInAI" v-if="!showDeleteConfirm">
                                         使用模板改写
                                     </button>
-                                    <button v-if="!isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="startEditing">
+                                    <button v-if="authToken && !isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="startEditing">
                                         编辑模板
                                     </button>
-                                    <button v-if="isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="isEditing = false">
+                                    <button v-if="authToken && isEditing && !showDeleteConfirm" class="btn btn-secondary" @click="isEditing = false">
                                         取消编辑
                                     </button>
-                                    <button class="btn btn-danger" @click="showDeleteConfirm = true" v-if="!showDeleteConfirm && isEditing">
+                                    <button class="btn btn-danger" @click="showDeleteConfirm = true" v-if="authToken && !showDeleteConfirm && isEditing">
                                         删除模板
                                     </button>
                                 </div>
@@ -1998,7 +2003,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                                     freestylefly/awesome-gpt-image-2
                                 </a>
                             </span>
-                            <button class="btn btn-primary" style="padding:4px 12px;font-size:12px;margin-right:6px;"
+                            <button v-if="authToken" class="btn btn-primary" style="padding:4px 12px;font-size:12px;margin-right:6px;"
                                     @click="addNewGalleryCase">+ 添加案例</button>
                             <button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;"
                                     @click="syncGallery" :disabled="gallerySyncing">
@@ -2080,7 +2085,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                                 {{ galleryModalCase.category }} · {{ galleryModalCase.sourceLabel || '' }}
                             </span>
                             <div style="display:flex;gap:8px;">
-                                <button v-if="!galleryEditMode" class="modal-close-btn" @click="startEditGalleryCase(galleryModalCase)">编辑</button>
+                                <button v-if="authToken && !galleryEditMode" class="modal-close-btn" @click="startEditGalleryCase(galleryModalCase)">编辑</button>
                                 <button v-if="galleryEditMode" class="modal-close-btn" style="background:#00aa55;" @click="saveGalleryEdit">保存</button>
                                 <button v-if="galleryEditMode" class="modal-close-btn" @click="cancelGalleryEdit">取消</button>
                                 <button class="modal-close-btn" @click="galleryModalCase = null">关闭</button>
@@ -2183,6 +2188,31 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
             </div>
         </div>
 
+        <!-- Login Modal -->
+        <div class="modal-overlay" v-if="showLogin" @click.self="showLogin = false">
+            <div class="modal-content" style="max-width:360px;">
+                <div class="modal-close">
+                    <span style="font-size:14px;color:#888;">登录</span>
+                    <button class="modal-close-btn" @click="showLogin = false">关闭</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-input" v-model="loginForm.username" placeholder="输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <input type="password" class="form-input" v-model="loginForm.password"
+                               placeholder="输入密码" @keydown.enter="doLogin">
+                    </div>
+                    <div class="error-message" v-if="loginError" style="margin-bottom:12px;">{{ loginError }}</div>
+                    <button class="btn btn-primary" @click="doLogin" :disabled="loggingIn">
+                        {{ loggingIn ? '登录中...' : '登录' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast -->
         <div class="toast" :class="{show: toast.show}">{{ toast.message }}</div>
     </div>
@@ -2194,6 +2224,58 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
         
         createApp({
             setup() {
+                // ── Auth ─────────────────────────────────────
+                const authToken = ref(localStorage.getItem('auth_token') || '');
+                const authUsername = ref(localStorage.getItem('auth_username') || '');
+                const showLogin = ref(false);
+                const loggingIn = ref(false);
+                const loginError = ref('');
+                const loginForm = ref({ username: 'sahn', password: '' });
+
+                // Wrap fetch to auto-inject auth for non-GET requests
+                const _originalFetch = window.fetch;
+                window.fetch = function(url, options = {}) {
+                    if (authToken.value && (options.method || 'GET') !== 'GET') {
+                        options.headers = { ...(options.headers || {}), 'Authorization': 'Bearer ' + authToken.value };
+                    }
+                    return _originalFetch.call(window, url, options);
+                };
+
+                async function doLogin() {
+                    loginError.value = '';
+                    loggingIn.value = true;
+                    try {
+                        const res = await fetch(API_BASE + '/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(loginForm.value)
+                        });
+                        if (!res.ok) {
+                            const err = await res.json();
+                            throw new Error(err.detail || '登录失败');
+                        }
+                        const data = await res.json();
+                        authToken.value = data.token;
+                        authUsername.value = data.username;
+                        localStorage.setItem('auth_token', data.token);
+                        localStorage.setItem('auth_username', data.username);
+                        showLogin.value = false;
+                        loginForm.value = { username: '', password: '' };
+                        showToast('登录成功');
+                    } catch (e) {
+                        loginError.value = e.message;
+                    }
+                    loggingIn.value = false;
+                }
+
+                function logout() {
+                    authToken.value = '';
+                    authUsername.value = '';
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('auth_username');
+                    showToast('已退出登录');
+                }
+
                 const currentPage = ref('home');
                 const selectedGuide = ref('gpt-image-2');
                 const templates = ref([]);
@@ -3234,6 +3316,14 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     language,
                     cnLabel,
                     switchLanguage,
+                    authToken,
+                    authUsername,
+                    showLogin,
+                    loggingIn,
+                    loginError,
+                    loginForm,
+                    doLogin,
+                    logout,
                                     };
             }
         }).mount('#app');
