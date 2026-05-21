@@ -97,6 +97,12 @@ class MatchRequest(BaseModel):
     template_ref: Optional[Dict[str, Any]] = None
 
 
+class ImageToPromptRequest(BaseModel):
+    image_base64: str
+    media_type: str = "image/jpeg"
+    extra_requirements: str = ""
+
+
 class SubmitRequest(BaseModel):
     title: str
     prompt: str
@@ -179,6 +185,24 @@ async def match_template(request: MatchRequest) -> Dict[str, Any]:
             request.user_input, templates, categories,
             history=request.history,
             template_ref=request.template_ref
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/image-to-prompt")
+async def image_to_prompt_endpoint(request: ImageToPromptRequest) -> Dict[str, Any]:
+    """
+    Analyze an uploaded image using MiniMax multimodal and
+    generate a structured Chinese prompt.
+    """
+    from backend.matching import image_to_prompt
+    try:
+        result = await image_to_prompt(
+            request.image_base64,
+            request.media_type,
+            request.extra_requirements
         )
         return result
     except Exception as e:

@@ -310,3 +310,53 @@ def _fallback_match(
         "optimized_prompt": "请用中文详细描述你想要的画面效果，包括：主体内容、风格、场景、光影、构图等。\n例如：一位年轻女性在咖啡店窗边，自然光从左侧照入，柔和的暖色调，浅景深虚化背景，写实摄影风格，竖构图 3:4",
         "reason": "请输入更具体的需求描述，以便AI为你精准匹配模板并生成中文提示词"
     }
+
+
+async def image_to_prompt(image_base64: str, media_type: str = "image/jpeg", extra_requirements: str = "") -> Dict[str, Any]:
+    """Analyze image via MiniMax VLM (coding plan) + generate structured Chinese prompt."""
+    if not MINIMAX_API_KEY:
+        return {"optimized_prompt": "请配置 MINIMAX_API_KEY", "error": "No API key"}
+
+    vlm_url = "https://api.minimaxi.com/v1/coding_plan/vlm"
+    data_url = f"data:{media_type};base64,{image_base64}"
+    prompt_text = "请详细描述这张图片的内容、构图、风格、光线、色彩和氛围"
+    if extra_requirements:
+        prompt_text += f"。额外需求：{extra_requirements}"
+
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            # Step 1: VLM image description
+            vlm_resp = await client.post(vlm_url, headers={
+                "Authorization": f"Bearer {MINIMAX_API_KEY}",
+                "Content-Type": "application/json"
+            }, json={"prompt": prompt_text, "image_url": data_url})
+            vlm_resp.raise_for_status()
+            vlm_result = vlm_resp.json()
+            if vlm_result.get("base_resp", {}).get("status_code") != 0:
+                return {"optimized_prompt": "图像分析失败", "error": vlm_result.get("base_resp", {}).get("status_msg", "")}
+            description = vlm_result.get("content", "")
+
+            # Step 2: Convert to structured prompt
+            if description:
+                text_resp = await client.post(MINIMAX_API_URL, headers={
+                    "X-Api-Key": MINIMAX_API_KEY, "Content-Type": "application/json", "anthropic-version": "2023-06-01"
+                }, json={
+                    "model": "MiniMax-M2.7", "temperature": 0.7, "max_tokens": 2000,
+                    "system": "You are a prompt engineer. Convert the image description into a structured Chinese prompt. Output ONLY valid JSON: {\"optimized_prompt\": \"the prompt text\"}. Use GPT Image 2 structure. Must be in Chinese.",
+                    "messages": [{"role": "user", "content": f"图片描述：\n{description}\n\n转换为结构化中文提示词。"}]
+                })
+                text_resp.raise_for_status()
+                text_result = text_resp.json()
+                content = ""
+                for block in text_result.get("content", []):
+                    if block.get("type") == "text":
+                        content = block.get("text", "")
+                        break
+                j_start = content.find("{"); j_end = content.rfind("}") + 1
+                if j_start != -1 and j_end != -1:
+                    parsed = json.loads(content[j_start:j_end])
+                    return {"description": description, "optimized_prompt": parsed.get("optimized_prompt", description)}
+                return {"description": description, "optimized_prompt": description}
+    except Exception as e:
+        print(f"Image-to-prompt error: {e}")
+        return {"optimized_prompt": "图像分析失败，请稍后重试", "error": str(e)}
