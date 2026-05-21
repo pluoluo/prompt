@@ -1551,7 +1551,10 @@
                                                 <textarea class="optimized-prompt-textarea" v-model="editablePrompt" rows="5"></textarea>
                                                 <div style="display:flex; gap:10px; margin-top:10px;">
                                                     <button class="btn btn-secondary" @click="copyConvPrompt(editablePrompt)">
-                                                        {{ copySuccess ? '已复制!' : '复制 Prompt' }}
+                                                        复制 Prompt
+                                                    </button>
+                                                    <button class="btn btn-secondary" @click="regeneratePrompt(idx)">
+                                                        重新生成
                                                     </button>
                                                     <button class="btn btn-secondary" @click="generateImage(editablePrompt)">
                                                         🎨 生成图像
@@ -2685,6 +2688,14 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     matching.value = false;
                 }
 
+                async function regeneratePrompt(turnIdx) {
+                    const turn = conversation.value[turnIdx];
+                    if (!turn) return;
+                    conversation.value.splice(turnIdx);
+                    matchInput.value = turn.userInput;
+                    await doMatch();
+                }
+
                 function resetConversation() {
                     conversation.value = [];
                     matchResult.value = null;
@@ -2781,11 +2792,13 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                             const prompt = c.prompt || '';
                             // Parse bilingual prompts: split on CN/EN delimiter
                             let promptCn = prompt, promptEn = prompt, isBilingual = false;
-                            const delims = ['\n英文版：\n', '\n---\n', '\nEnglish:\n'];
+                            const delims = ['\n[English]\n', '\n英文版：\n', '\n---\n', '\nEnglish:\n'];
                             for (const d of delims) {
                                 const idx = prompt.indexOf(d);
                                 if (idx >= 0) {
                                     promptCn = prompt.substring(0, idx).trim();
+                                    // Clean up CN markers
+                                    promptCn = promptCn.replace(/^\[中文\]\s*\n?/i, '').replace(/^【中文】\s*\n?/i, '').trim();
                                     promptEn = prompt.substring(idx + d.length).trim();
                                     isBilingual = true;
                                     break;
@@ -2799,7 +2812,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                                 githubImageUrl: 'https://raw.githubusercontent.com/freestylefly/awesome-gpt-image-2/main/data/images/case' + c.id + '.jpg',
                                 prompt: language.value === 'zh' ? promptCn : promptEn,
                                 promptCn: isBilingual ? promptCn : undefined,
-                                promptEn: isBilingual ? promptEn : undefined,
+                                promptEn: prompt,  // Always save original for EN fallback
                                 styles: c.styles || [],
                                 scenes: c.scenes || [],
                                 sourceLabel: c.sourceLabel || '',
@@ -3152,8 +3165,10 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     conversation,
                     templateRefForAI,
                     resetConversation,
+                    regeneratePrompt,
                     useTemplateInAI,
                     useTemplateInAIFromCard,
+                    copyToClipboard,
                     copyConvPrompt,
                     submitTemplate,
                     toggleStyle,

@@ -43,7 +43,7 @@ async def match_prompt(
 ) -> Dict[str, Any]:
     """Match user input to templates using MiniMax LLM. Supports multi-turn conversation and template reference."""
     if not MINIMAX_API_KEY:
-        return _fallback_match(user_input, templates, categories)
+        return _fallback_match(user_input, templates, categories, template_ref)
 
     category_summary = "\n".join([f"- {c}" for c in categories])
 
@@ -107,6 +107,14 @@ async def match_prompt(
 ## 多轮修改原则
 一轮只修一类问题，用具体指令而不是 "make it better"
 
+## 格式转换规则
+如果参考模板或用户输入中包含 Python class、JSON 结构、代码块等程序化格式，必须将其转换为自然语言的格式化文本：
+- Python class 的属性 → 对应的描述段落或列表项
+- JSON 的 key:value → "key：value" 或列表项
+- 代码块中的参数 → 展开为分组描述
+- 保留所有参数信息和层级关系，只改变表达形式
+- 去除代码语法（冒号、引号、花括号、缩进），改用中文标点和自然分段
+
 ## 输出要求
 - 使用正面具体描述，不说空泛形容词
 - 避免歧义和矛盾描述
@@ -120,12 +128,18 @@ async def match_prompt(
 
 ## 核心原则：模板结构优先
 
-用户已选择了一个参考模板，你需要严格以该模板为蓝本进行改写：
-1. 逐段分析参考模板的结构——它有哪些段落/模块？每个模块用什么格式？参数怎么排列？
-2. 保持模板的原始结构和格式不变——分段方式、参数命名、列表格式、特殊标记全都保留
-3. 仅将模板中的具体内容替换为用户新需求的内容
-4. 如果用户需求与模板结构有冲突，以模板结构为准，把需求适配进去
-5. 模板中的占位符（如 {{argument}}、[placeholder]）如果用户没提供，保留原样或填合理默认值
+用户已选择了一个参考模板，你需要以该模板为蓝本生成新的 Prompt：
+1. 理解模板的整体风格、结构层次和用词习惯——它是怎么组织信息的？
+2. 用同样的风格和结构层次，写一个全新的 Prompt 来满足用户需求
+3. 不要照搬模板的词句，而是借鉴它的组织方式和表达风格
+4. 如果用户需求没覆盖模板中的某些部分，合理补全
+
+## 格式转换
+如果模板中包含 Python class、JSON 结构、代码块等程序化格式，必须转换为自然语言格式化文本：
+- Python class 属性 → 对应描述段落/列表项
+- JSON key:value → "key：value" 或列表项
+- 代码块参数 → 展开为分组描述
+- 保留所有信息，只改变表达形式，去除代码语法
 
 ## 质量标准（参考 GPT Image 2 指南）
 - 必须用中文输出（硬性要求），仅保留英文技术术语（--ar、镜头型号、风格关键词）
@@ -142,7 +156,7 @@ async def match_prompt(
 {template_context}
 {history_context}
 
-请逐段分析以上参考模板的结构，保持其格式和模块划分完全不变，只将内容替换为用户需求。optimized_prompt 必须用中文输出，仅保留英文技术术语。"""
+请参考以上模板的风格和结构，生成一个全新的中文 Prompt 来满足用户需求。不需要匹配其他模板，不需要给匹配理由，只输出一个高质量的中文 Prompt。"""
 
     else:
         system_prompt = f"""You are a JSON-only response bot. You MUST output valid JSON and NOTHING ELSE — no markdown, no code fences, no extra text.
@@ -192,11 +206,11 @@ async def match_prompt(
         "system": system_prompt,
         "messages": messages,
         "temperature": 0.7,
-        "max_tokens": 1200 if template_ref else 2000
+        "max_tokens": 3000 if template_ref else 3000
     }
     
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
                 MINIMAX_API_URL,
                 headers=headers,
@@ -244,17 +258,27 @@ async def match_prompt(
     except Exception as e:
         print(f"MiniMax API error: {e}")
     
-    return _fallback_match(user_input, templates, categories)
+    return _fallback_match(user_input, templates, categories, template_ref)
 
 
 def _fallback_match(
     user_input: str,
     templates: List[Dict[str, Any]],
-    categories: List[str]
+    categories: List[str],
+    template_ref: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Simple keyword-based fallback matching"""
+    """Simple keyword-based fallback matching — respects template_ref mode."""
+    # If user selected a template, generate based on it — don't match others
+    if template_ref:
+        ref_prompt = template_ref.get("prompt", "")
+        ref_title = template_ref.get("title", "")
+        return {
+            "optimized_prompt": f"参考「{ref_title}」的风格和结构，为以下需求生成中文 Prompt：\n\n{user_input}\n\n（AI 服务暂时不可用，以上为需求摘要，请稍后重试）",
+            "reason": "",
+        }
+
     user_lower = user_input.lower()
-    
+
     keywords_map = {
         "摄影与写实": ["photo", "写真", "摄影", "realistic", "portrait", "写实"],
         "UI与界面": ["ui", "界面", "interface", "app", "网站"],
@@ -277,10 +301,10 @@ def _fallback_match(
                 if t.get("category", "") == cat_key:
                     if t not in matched:
                         matched.append(t)
-    
+
     if not matched:
         matched = templates[:3]
-    
+
     return {
         "matched_templates": matched[:3],
         "optimized_prompt": "请用中文详细描述你想要的画面效果，包括：主体内容、风格、场景、光影、构图等。\n例如：一位年轻女性在咖啡店窗边，自然光从左侧照入，柔和的暖色调，浅景深虚化背景，写实摄影风格，竖构图 3:4",
