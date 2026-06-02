@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "展厅/展馆内的知识类展板",
+    "prompt": "Create an exhibition board infographic for [主题].\nUse a [比例，如9:16竖版] layout with clear visual hierarchy.\n\nStructure:\n- 顶部：中文主标题 + 副标题（简洁，克制）\n- 左侧/中部：主体拆解图 or 核心视觉\n- 右侧/周围：3-5个标注区，每个带中文引线说明\n- 底部：总结 or 关键词标签\n\nStyle: [博物馆展板风 / 极简白底 / 国潮设计风]\nLighting: [自然柔和棚拍光 / 无强烈阴影]\nMaterials: [真实质感，非扁平插画风]\nAvoid: 海报感、电商感、动漫感、过多装饰元素\nMake it suitable for [展馆展板 / 展厅信息墙 / 博物馆墙]\n\nText rules: 所有文字简体中文，清晰可读，无乱码，推荐馆阁体/楷体风格",
+    "category": "图表与信息图",
+    "styles": [],
+    "scenes": [],
+    "description": "展厅/展馆内的知识类展板、拆解图、信息图"
+  }
+]

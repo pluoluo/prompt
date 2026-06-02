@@ -2867,6 +2867,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(body)
                         });
+                        if (res.status === 401) throw new Error('AUTH_REQUIRED');
                         if (!res.ok) throw new Error(`API error: ${res.status}`);
                         const data = await res.json();
                         templates.value.push(data.template);
@@ -2878,7 +2879,13 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                         setTimeout(() => { submitSuccess.value = false; }, 3000);
                     } catch (e) {
                         console.error('Submit failed:', e);
-                        showToast('提交失败');
+                        if (e.message === 'AUTH_REQUIRED') {
+                            submitError.value = '提交失败，请登录后重新提交。';
+                            showLogin.value = true;
+                        } else {
+                            submitError.value = '提交失败，请稍后重试。';
+                        }
+                        showToast('提交失败，请登录后重新提交。');
                     }
                     submitting.value = false;
                 }
