@@ -12,6 +12,13 @@ nginx.pid
 # Runtime data
 *.pid
 
+# Test / upload artifacts
+test.jpg
+backend/*.log
+nginx-access.log
+nginx-error.log
+nginx.pid
+
 # Backup data
 *.bak
 *_备份.json
@@ -22,7 +29,7 @@ nginx-portal.conf
 prompt-portal-nginx.conf
 
 # Work files
-backend/pending_review.json
+# (pending_review.json is intentionally tracked — runtime snapshot)
 
 # Gallery images (downloaded from GitHub / user uploads)
 backend/data/gallery_images/
