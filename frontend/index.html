@@ -2235,14 +2235,13 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                                     <label class="form-label">图片</label>
                                     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
                                         <input type="text" class="form-input" v-model="galleryEditForm.imageUrl"
-                                               :placeholder="galleryModalCase?.imageUrl || '图片URL'" style="margin-bottom:0;">
-                                        <input type="file" id="gallery-image-upload" accept="image/*"
+                                               :placeholder="galleryModalCase?.imageUrl || '图片URL（可上传本地文件）'" style="margin-bottom:0;">
+                                        <input type="file" id="gallery-image-upload" accept="image/png,image/jpeg,image/webp"
                                                style="display:none;" @change="uploadGalleryImage">
                                         <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;white-space:nowrap;"
-                                                @click="document.getElementById('gallery-image-upload').click()">选择文件</button>
-                                        <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;white-space:nowrap;"
-                                                @click="uploadGalleryImage" :disabled="galleryUploading">
-                                            {{ galleryUploading ? '上传中...' : '上传' }}
+                                                @click="pickGalleryImage"
+                                                :disabled="galleryUploading">
+                                            {{ galleryUploading ? '上传中...' : '📁 选择文件' }}
                                         </button>
                                     </div>
                                     <img v-if="galleryEditForm.imageUrl" :src="galleryEditForm.imageUrl"
@@ -2312,11 +2311,17 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                 const loginError = ref('');
                 const loginForm = ref({ username: 'sahn', password: '' });
 
-                // Wrap fetch to auto-inject auth for non-GET requests
+                // Wrap fetch to auto-inject auth for non-GET requests.
+                // Read token from both the ref and localStorage each call, so
+                // sessions restored from localStorage still get a valid header.
                 const _originalFetch = window.fetch;
                 window.fetch = function(url, options = {}) {
-                    if (authToken.value && (options.method || 'GET') !== 'GET') {
-                        options.headers = { ...(options.headers || {}), 'Authorization': 'Bearer ' + authToken.value };
+                    const method = (options.method || 'GET').toUpperCase();
+                    if (method !== 'GET') {
+                        const token = authToken.value || localStorage.getItem('auth_token') || '';
+                        if (token) {
+                            options.headers = { ...(options.headers || {}), 'Authorization': 'Bearer ' + token };
+                        }
                     }
                     return _originalFetch.call(window, url, options);
                 };
@@ -3045,7 +3050,9 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                                 id: c.id,
                                 title: c.title || 'Untitled',
                                 category: c.category || 'Other',
-                                imageUrl: '/api/gallery/images/case' + c.id + (c.image || '.jpg').match(/\.[a-z]+$/)[0],
+                                // Prefer backend imageUrl (set by upload/edit); fall back to
+                                // the legacy hardcoded path derived from c.image for sync'd cases.
+                                imageUrl: c.imageUrl || ('/api/gallery/images/case' + c.id + (c.image || '.jpg').match(/\.[a-z]+$/)[0]),
                                 githubImageUrl: 'https://raw.githubusercontent.com/freestylefly/awesome-gpt-image-2/main/data/images/case' + c.id + '.jpg',
                                 prompt: language.value === 'zh' ? promptCn : promptEn,
                                 promptCn: isBilingual ? promptCn : undefined,
@@ -3115,7 +3122,12 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     else gallerySceneFilters.value.push(s);
                 }
                 function startEditGalleryCase(c) {
-                    galleryEditForm.value = { title: c.title || '', category: c._catOriginal || c.category || '', prompt: c.prompt || '' };
+                    galleryEditForm.value = {
+                        title: c.title || '',
+                        category: c._catOriginal || c.category || '',
+                        prompt: c.prompt || '',
+                        imageUrl: c.imageUrl || '',
+                    };
                     galleryEditStyles.value = [...(c.styles || [])];
                     galleryEditScenes.value = [...(c.scenes || [])];
                     galleryEditMode.value = true;
@@ -3124,40 +3136,69 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     const c = galleryModalCase.value;
                     if (!c) return;
                     try {
+                        // Re-read token from localStorage to defend against stale
+                        // closure (e.g. tab was opened, authToken was empty, then
+                        // user logged in via a different flow).
+                        let liveToken = authToken.value;
+                        if (!liveToken) liveToken = localStorage.getItem('auth_token') || '';
+                        if (liveToken) authToken.value = liveToken;
+
                         const body = {
                             title: galleryEditForm.value.title,
                             category: galleryEditForm.value.category,
                             prompt: galleryEditForm.value.prompt,
                             styles: galleryEditStyles.value,
                             scenes: galleryEditScenes.value,
+                            imageUrl: galleryEditForm.value.imageUrl || undefined,
                         };
                         const isNew = !c.id;
                         const method = isNew ? 'POST' : 'PUT';
                         const url = isNew ? `${API_BASE}/api/gallery/cases` : `${API_BASE}/api/gallery/cases/${c.id}`;
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (liveToken) headers['Authorization'] = 'Bearer ' + liveToken;
                         const res = await fetch(url, {
                             method,
-                            headers: { 'Content-Type': 'application/json' },
+                            headers,
                             body: JSON.stringify(body)
                         });
+                        if (res.status === 401) {
+                            // Token expired or missing — force re-login
+                            authToken.value = '';
+                            authUsername.value = '';
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('auth_username');
+                            showLogin.value = true;
+                            showToast('登录已过期，请重新登录后重试');
+                            return;
+                        }
                         if (!res.ok) throw new Error('HTTP ' + res.status);
                         const result = await res.json();
                         const updated = result.case || result;
                         if (isNew) {
-                            // Add to local list
+                            // Add to local list — use the imageUrl returned by backend (already a real uploaded path)
                             galleryCases.value.push({
                                 id: updated.id, title: updated.title, category: updated.category,
                                 prompt: updated.prompt, styles: updated.styles || [], scenes: updated.scenes || [],
-                                imageUrl: '/api/gallery/images/case' + updated.id + '.jpg',
+                                imageUrl: updated.imageUrl || '/api/gallery/images/uploads/placeholder.jpg',
                                 githubImageUrl: '', sourceLabel: '', sourceUrl: '', githubUrl: '',
                                 _catOriginal: updated.category, _stylesOriginal: updated.styles, _scenesOriginal: updated.scenes,
                             });
                         } else {
+                            // Replace fields one-by-one AND update the proxy deeply
+                            // so that <img :src> re-evaluates and the browser refetches.
+                            // Use a fresh timestamp query param to bust any cache.
+                            const newImg = updated.imageUrl ? `${updated.imageUrl}?t=${Date.now()}` : c.imageUrl;
                             c.title = updated.title;
                             c.category = updated.category;
                             c.prompt = updated.prompt;
                             c.styles = updated.styles || [];
                             c.scenes = updated.scenes || [];
+                            if (updated.imageUrl) c.imageUrl = newImg;
                             c._catOriginal = updated.category;
+                            // Force-refresh galleryModalCase to trigger v-if branch re-evaluation
+                            if (galleryModalCase.value === c) {
+                                galleryModalCase.value = { ...c };
+                            }
                         }
                         showToast('已保存到服务器');
                     } catch (e) {
@@ -3241,6 +3282,10 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                 function openGalleryCase(c) {
                     galleryEditMode.value = false;
                     galleryModalCase.value = c;
+                }
+                function pickGalleryImage() {
+                    const input = document.getElementById('gallery-image-upload');
+                    if (input) input.click();
                 }
 
                 async function syncGallery() {
@@ -3445,6 +3490,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     galleryCategories,
                     filteredGalleryCases,
                     openGalleryCase,
+                    pickGalleryImage,
                     unifiedStyleFilters,
                     galleryStyleFilters,
                     galleryStyleFiltersComp,
@@ -3489,6 +3535,8 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     loginForm,
                     doLogin,
                     logout,
+                    showToast,
+                    copyToClipboard,
                                     };
             }
         }).mount('#app');

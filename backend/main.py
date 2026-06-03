@@ -110,6 +110,7 @@ class SubmitRequest(BaseModel):
     styles: List[str] = []
     scenes: List[str] = []
     description: str = ""
+    imageUrl: Optional[str] = None
 
 
 class UpdateRequest(BaseModel):
@@ -119,6 +120,7 @@ class UpdateRequest(BaseModel):
     styles: Optional[List[str]] = None
     scenes: Optional[List[str]] = None
     description: Optional[str] = None
+    imageUrl: Optional[str] = None
 
 
 @app.post("/api/auth/login")
@@ -376,21 +378,79 @@ async def sync_gallery(username: str = Depends(require_auth)):
 @app.post("/api/gallery/upload")
 async def upload_gallery_image(file: UploadFile = FastAPIFile(...)):
     """
-    Upload an image for a gallery case. Saves to gallery_images/uploads/.
-    Returns the relative URL path to the uploaded image.
+    Upload an image for a gallery case. Resizes so the longest side is
+    at most 2000px (preserving aspect ratio), strips EXIF, re-encodes as
+    JPEG quality 85. Returns the relative URL path to the uploaded image.
     """
     import uuid
+    from io import BytesIO
+    from PIL import Image, ImageOps, UnidentifiedImageError
+
+    MAX_SIDE = 2000
+    JPEG_QUALITY = 85
+    ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
+
+    content_type = (file.content_type or "").lower()
+    if content_type not in ALLOWED_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"不支持的图片格式: {content_type}。仅支持 JPEG/PNG/WebP。",
+        )
+
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(status_code=400, detail="空文件")
+
+    try:
+        img = Image.open(BytesIO(raw))
+    except UnidentifiedImageError:
+        raise HTTPException(status_code=400, detail="无法识别的图片文件")
+
+    # Apply EXIF orientation, then strip EXIF/metadata
+    img = ImageOps.exif_transpose(img)
+    has_alpha = img.mode in ("RGBA", "LA", "P")
+
+    if has_alpha:
+        # Keep alpha for PNG; flatten onto white for JPEG below
+        base = img.convert("RGBA")
+    else:
+        img = img.convert("RGB")
+        base = img
+
+    # Resize if longest side > MAX_SIDE
+    w, h = base.size
+    longest = max(w, h)
+    if longest > MAX_SIDE:
+        scale = MAX_SIDE / longest
+        new_w = max(1, round(w * scale))
+        new_h = max(1, round(h * scale))
+        # LANCZOS for downsampling quality
+        base = base.resize((new_w, new_h), Image.LANCZOS)
+
     upload_dir = GALLERY_IMAGES_DIR / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)
-    ext = file.filename.rsplit(".", 1)[-1] if file.filename and "." in file.filename else "jpg"
-    safe_name = f"{uuid.uuid4().hex}.{ext}"
+    safe_name = f"{uuid.uuid4().hex}.jpg"
     file_path = upload_dir / safe_name
-    content = await file.read()
-    file_path.write_bytes(content)
+
+    # If original had alpha, composite onto white before JPEG encode
+    if has_alpha:
+        bg = Image.new("RGB", base.size)
+        bg.paste((255, 255, 255), [0, 0, *base.size])  # fill white
+        bg.paste(base, mask=base.split()[-1])
+        base = bg
+
+    out = BytesIO()
+    base.save(out, format="JPEG", quality=JPEG_QUALITY, optimize=True)
+    file_path.write_bytes(out.getvalue())
+
     return {
         "ok": True,
         "url": f"/api/gallery/images/uploads/{safe_name}",
         "filename": safe_name,
+        "width": base.size[0],
+        "height": base.size[1],
+        "original_size": {"width": w, "height": h},
+        "compressed_bytes": len(out.getvalue()),
     }
 
 
@@ -458,7 +518,8 @@ def add_gallery_case(request: SubmitRequest, username: str = Depends(require_aut
         "styles": request.styles,
         "scenes": request.scenes,
         "description": request.description,
-        "image": f"/images/case{new_id}.jpg",
+        "image": request.imageUrl or f"/images/case{new_id}.jpg",
+        "imageUrl": request.imageUrl or f"/images/case{new_id}.jpg",
         "imageAlt": request.title,
         "sourceLabel": "",
         "sourceUrl": "",
