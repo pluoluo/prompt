@@ -40,6 +40,12 @@ test('reject empty or unsupported configurations', () => {
 });
 
 const library = process.env.SPACE_PRESET_LIBRARY;
+test('preset upgrades migrate old default instructions and preserve custom project facts', () => {
+    const sections = {'材料': {fields: {'清单': {type:'select', default:'保留原材料', options:['保留原材料','金属'], previousDefault:'请填写材料清单'}}}};
+    const id = Core.fieldId('材料','清单');
+    assert.equal(Core.restore(sections, {[id]:'请填写材料清单'})[id], '保留原材料');
+    assert.equal(Core.restore(sections, {[id]:'客户指定的白橡木'})[id], '客户指定的白橡木');
+});
 test('image app URL preserves full JSON and existing base-path configuration', () => {
     const prompt = '{\n"材质": "白色 & 木纹 + 金属", "比例": "16:9"\n}';
     const result = new URL(Core.imageDestination('http://nas:8080/studio?mode=edit', prompt));

@@ -4,13 +4,17 @@
     const STORAGE_KEY = 'prompt_portal_space_v1';
     let configPromise = null;
     function loadConfig() {
-        if (!configPromise) configPromise = fetch(new URL('data/space-presets.local.json', document.baseURI), {cache: 'no-cache'})
-            .then(async response => {
+        async function readLibrary(path) {
+            const response = await fetch(new URL(path, document.baseURI), {cache: 'no-cache'});
                 if (!response.ok) throw new Error('尚未安装空间设计预设库，请选择完整参数文件，或联系管理员安装。');
                 const data = await response.json();
                 Core.validateConfig(data);
                 return data;
-            }).catch(error => { configPromise = null; throw error; });
+        }
+        if (!configPromise) configPromise = Promise.all([
+            readLibrary('data/professional-presets.json'), readLibrary('data/space-presets.local.json')
+        ]).then(([professional, original]) => ({...original, groups: {...professional.groups, ...original.groups}}))
+            .catch(error => { configPromise = null; throw error; });
         return configPromise;
     }
     window.SpaceGenerator = {
@@ -178,13 +182,14 @@
             <div v-else-if="error" class="sp-load-state"><p role="alert">{{ error }}</p><button class="sp-btn" @click="load">重新载入</button> <label class="sp-btn">选择预设文件<input class="sp-file-input" type="file" accept=".json,application/json" @change="importConfig"></label></div>
             <div v-else class="sp-layout">
                 <div class="sp-main">
-                    <div class="sp-heading"><div><div class="sp-eyebrow">SPACE DESIGN / PROMPT STUDIO</div><h1>空间设计生成器</h1><p>选一套场景预设，调好材质与光影，让模型图更接近你想要的效果。</p></div><div class="sp-count">{{ count }} 套场景预设</div></div>
+                    <div class="sp-heading"><div><div class="sp-eyebrow">SPACE DESIGN / PROMPT STUDIO</div><h1>空间设计生成器</h1><p>展台、展厅、文化墙：探索新方案，或保留原方案深化材质与光影。</p></div><div class="sp-count">{{ count }} 套场景预设</div></div>
                     <div class="sp-groups" aria-label="设计分类"><button v-for="g in groups" :key="g.key" :aria-pressed="groupKey === g.key" @click="selectGroup(g.key)">{{ g.icon }} {{ g.name }} <small>{{ g.presets.length }}</small></button></div>
                     <div class="sp-preset-tools"><input class="sp-input" v-model="search" type="search" placeholder="搜索当前分类的场景预设" aria-label="搜索场景预设"><span>{{ filteredPresets.length }} 套预设</span></div>
                     <div class="sp-presets" aria-label="场景预设"><button v-for="p in filteredPresets" :key="p.key" :aria-pressed="presetKey === p.key" @click="selectPreset(p.key)">{{ p.name || p.key }}</button><div v-if="!filteredPresets.length" class="sp-empty">没有匹配的预设，试试其他关键词。</div></div>
+                    <p v-if="preset?.description" class="sp-description">{{ preset.description }}</p>
                     <section class="sp-section" v-for="(section, i) in sectionList" :key="section.key"><h2 class="sp-section-title"><span class="sp-section-number">{{ String(i + 1).padStart(2, '0') }}</span>{{ section.key }}</h2>
                         <div class="sp-section-grid"><div class="sp-card" v-for="field in section.fieldsList" :key="field.id">
-                            <div class="sp-card-head"><h3>{{ field.label || field.key }}</h3><small v-if="field.type === 'multi-select'">可多选</small></div>
+                            <div class="sp-card-head"><h3>{{ field.label || field.key }}</h3><small v-if="field.type === 'multi-select'">可多选</small><small v-else-if="preset?.source && field.type === 'text'">项目填写</small></div>
                             <p v-if="field.description" class="sp-description">{{ field.description }}</p>
                             <label v-if="field.type === 'switch' || field.type === 'boolean'"><input class="sp-switch" type="checkbox" v-model="values[field.id]" :aria-label="field.label || field.key"> {{ values[field.id] ? '开启' : '关闭' }}</label>
                             <textarea v-else-if="field.type === 'text'" class="sp-input" v-model="values[field.id]" :aria-label="field.label || field.key"></textarea>
@@ -201,7 +206,7 @@
                     <div class="sp-output-tabs"><strong>JSON 提示词</strong><span>● 实时更新</span></div><pre class="sp-code" tabindex="0" aria-label="JSON 提示词结果">{{ prompt }}</pre>
                     <div class="sp-actions"><button class="sp-btn sp-btn-primary" @click="copy">复制 JSON</button><button class="sp-btn" @click="download">下载 JSON</button><button class="sp-btn sp-btn-wide" @click="useAI">继续用 AI 改写 →</button><button class="sp-btn sp-btn-primary sp-btn-wide" :disabled="!imageApiUrl" @click="goGenerate">去生成图像</button></div>
                     <div v-if="status" class="sp-status" role="status">{{ status }}</div>
-                    <div class="sp-source">预设来源：LIN 网站公开前台 · 交流学习整理<br><a href="https://154.201.65.81/" target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a></div>
+                    <div class="sp-source">{{ preset?.source || '预设来源：LIN 网站公开前台 · 交流学习整理' }}<template v-if="!preset?.source"><br><a href="https://154.201.65.81/" target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a></template></div>
                 </aside>
             </div><div v-if="config && !loading && !error" class="sp-mobile-actions"><button class="sp-btn" @click="focusOutput">查看提示词 ↓</button><button class="sp-btn sp-btn-primary" @click="copy">复制当前 JSON</button></div><div v-if="error && status" class="sp-status" role="status">{{ status }}</div>
         </div>`

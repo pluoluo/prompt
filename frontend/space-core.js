@@ -61,10 +61,15 @@
     }
     function restore(sections, saved) {
         const values = defaults(sections);
+        const fields = {};
+        for (const [sk, section] of Object.entries(sections)) {
+            for (const [fk, field] of Object.entries(section.fields || {})) fields[fieldId(sk, fk)] = field;
+        }
         if (!saved || typeof saved !== 'object') return values;
         for (const id of Object.keys(values)) {
             if (!Object.hasOwn(saved, id)) continue;
             const expected = values[id], candidate = saved[id];
+            if (fields[id].previousDefault === candidate) continue;
             if (Array.isArray(expected) && Array.isArray(candidate) && candidate.every(x => typeof x === 'string')) values[id] = candidate;
             else if (typeof expected === typeof candidate && ['string', 'boolean'].includes(typeof candidate)) values[id] = candidate;
         }

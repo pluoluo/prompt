@@ -10,6 +10,8 @@ from pathlib import Path
 def patch_html(text):
     def image_bridge(current):
         current = current.replace('v=20261106"', 'v=20261106-2"')
+        current = current.replace('v=20261106-2"', 'v=20261106-3"')
+        current = current.replace('v=20261106-3"', 'v=20261106-4"')
         current = current.replace(' @use-ai="useSpacePrompt"></space-generator>', ' @use-ai="useSpacePrompt" :image-api-url="imageApiUrl" @generate-image="generateImage"></space-generator>')
         current = current.replace("const imageApiUrl = ref('http://localhost:8766');", "const imageApiUrl = ref('');")
         old = '''                function generateImage(prompt) {
@@ -94,6 +96,7 @@ def install(project_dir, apply=False, library=None):
     plan = {}
     for name in ['space-core.js', 'space-generator.js', 'space-generator.css']:
         plan['frontend/' + name] = (source / 'frontend' / name).read_bytes()
+    plan['frontend/data/professional-presets.json'] = (source / 'frontend/data/professional-presets.json').read_bytes()
     library_source = Path(library) if library else source / 'frontend/data/space-presets.local.json'
     if library_source.exists():
         parsed = json.loads(library_source.read_text(encoding='utf-8'))
