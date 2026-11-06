@@ -56,6 +56,35 @@ test('image app URL preserves full JSON and existing base-path configuration', (
     assert.throws(() => Core.imageDestination('javascript:alert(1)', prompt));
 });
 
+test('cultural wall copy modes retain supplied text and migrate conflicting old defaults', () => {
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../frontend/data/professional-presets.json'), 'utf8'));
+    for (const preset of config.groups.professional_wall.presets) {
+        const sections = preset.sections;
+        const contentSection = preset.key === 'wall_concept_v1' ? '文案与层级' : '墙面内容';
+        const fields = sections[contentSection].fields;
+        const mode = fields['文案补充方式'];
+        assert.deepEqual(Core.optionItems(mode).map(x=>x.label), ['仅使用已提供文案','AI 补充栏目标题','AI 补充标题和短文']);
+        const copyId = Core.fieldId(contentSection, '准确文案');
+        const modeId = Core.fieldId(contentSection, '文案补充方式');
+        const saved = {[copyId]:'主标题：刑事审判庭'};
+        for (const [sk, section] of Object.entries(sections)) {
+            for (const [fk, field] of Object.entries(section.fields)) {
+                if (field.previousDefault) saved[Core.fieldId(sk,fk)] = field.previousDefault;
+            }
+        }
+        saved[copyId] = '主标题：刑事审判庭';
+        for (const option of Core.optionItems(mode)) {
+            const values = Core.restore(sections, {...saved,[modeId]:option.value});
+            const output = Core.compose(sections,values);
+            assert.equal(output[contentSection]['准确文案'], '主标题：刑事审判庭');
+            assert.equal(output[contentSection]['文案补充方式'], option.value);
+            assert.ok(!JSON.stringify(output).includes('只使用提供的准确文案、数据、荣誉和品牌资料'));
+            assert.ok(!JSON.stringify(output).includes('不得增加原方案没有的装饰、灯带和文字'));
+            assert.ok(!JSON.stringify(output).includes('分两张输出'));
+        }
+    }
+});
+
 test('private library defaults match all captured public previews', {skip: !library}, () => {
     const data = JSON.parse(fs.readFileSync(library, 'utf8'));
     const expectedPath = process.env.SPACE_EXPECTED_PREVIEWS;

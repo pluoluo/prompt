@@ -413,8 +413,46 @@ for group in groups.values():
                 if field['type']=='text':
                     field['description']='项目事实可直接填写；没有补充信息时可以保留默认，之后再完善。'
     
-data={'version':'professional-20261106-v2-choices','groups':groups}
+copy_options = [
+    {'label':'仅使用已提供文案', 'value':'保留用户提供的主标题及全部指定文案，逐字使用。未提供的栏目标题、正文和口号均不补充，允许留白。'},
+    {'label':'AI 补充栏目标题', 'value':'逐字保留用户提供的主标题及指定文案。允许围绕主题补充 1–3 个简短栏目标题，每个约 4–8 个汉字；不补正文。根据观看距离和可用空间减少栏目，不为填满墙面放大文字。'},
+    {'label':'AI 补充标题和短文', 'value':'逐字保留用户提供的主标题及指定文案。允许围绕主题补充 1–3 个栏目，每个栏目包含约 4–8 字的短标题及约 15–30 字的简短说明。优先保证观看距离下的可读性与合理留白；空间不足时减少栏目和文字，不放大文字或扩大墙面来填满画面。'}
+]
+copy_common = ('文案补充权限仅由“文案补充方式”决定。AI 补充内容限于主题相关的通用说明、倡议或理念，不编造机构正式职责、法规条文、真实事件、数据、荣誉、人物及品牌事实；具体事实必须依据用户提供的资料。'
+               '该权限只涉及文字，不授权改变墙面尺寸、原有场景或添加未选择的装饰图形。在一次生图中按所选方式补文案并完成画面，无须先生成另一张图。')
+for item in groups['professional_wall']['presets']:
+    sk = '文案与层级' if item['key']=='wall_concept_v1' else '墙面内容'
+    fields = item['sections'][sk]['fields']
+    fields['准确文案']['previousDefault']=fields['准确文案']['default']
+    fields['准确文案']['default']='请填写必须原样保留的主标题及已有文案；其余文字按“文案补充方式”处理。'
+    fields['准确文案']['description']='只提供主标题也可以；选择 AI 补充时，会在生成画面时补齐所选范围内的文字。'
+    item['sections'][sk]['fields']={
+        '文案补充方式':{'type':'select','options':copy_options,'default':copy_options[2]['value'],
+                      'description':'可授权 AI 补栏目或短文；已提供的主标题和指定文案始终原样保留。'},
+        **fields,
+        '文案补充边界':{'type':'select','options':[{'label':'保留原文 · 仅补主题文案','value':copy_common}], 'default':copy_common}
+    }
+    if item['key']=='wall_concept_v1':
+        view=item['sections']['灯光与输出']['fields']['交付视图']
+        view['previousDefault']=view['default']
+        view['options']=[
+            {'label':'现场斜侧','value':'一次生成一张现场斜侧效果图，完整表现目标墙面边界、材料厚度与相邻环境。'},
+            {'label':'正立面','value':'一次生成一张正立面效果图，完整表现目标墙面边界、文字与模块布局。'},
+            {'label':'局部近景','value':'一次生成一张指定墙面的局部近景效果图，表现材料、文字厚度与安装细节；不改变整体布局。'}
+        ]
+        view['default']=view['options'][0]['value']
+        f=item['sections']['灯光与输出']['fields']['一致性要求']
+        f['previousDefault']=f['default']
+        f['default']='用户提供的主标题及指定文案原样保留，未提供文字仅按所选文案补充方式处理；真实事实与品牌资料以提供内容为准。墙面与相邻环境关系真实，设计不越出指定范围。'
+        f['options']=[{'label':'保留原文与场景','value':f['default']}]
+    else:
+        f=item['sections']['光线与输出']['fields']['禁止改动']
+        f['previousDefault']=f['default']
+        f['default']='不得重做指定墙面以外的地面、吊顶、门窗、家具或室外景观，不增加原方案没有的装饰和灯带；文字只按所选文案补充方式增补，用户提供的主标题与指定文案不得改写。'
+        f['options']=[{'label':'场景不动 · 按权限补文案','value':f['default']}]
+
+data={'version':'professional-20261106-v3-copy-expansion','groups':groups}
 target=Path(__file__).resolve().parents[1]/'frontend/data/professional-presets.json'
 target.parent.mkdir(exist_ok=True)
-target.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+target.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 print('Built 6 professional presets:',target)
