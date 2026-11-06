@@ -1,4 +1,5 @@
 import json
+import base64
 import unittest
 from unittest.mock import patch, AsyncMock
 
@@ -7,6 +8,23 @@ from backend import matching
 
 
 class TextProviderTests(unittest.IsolatedAsyncioTestCase):
+    async def test_image_reverse_passes_image_and_uses_new_model_for_both_steps(self):
+        encoded = base64.b64encode(b'\x89PNG\r\n\x1a\nimage-test').decode()
+        chat = AsyncMock(side_effect=['a silver exhibition hall', '{"optimized_prompt":"silver exhibition hall, soft light"}'])
+        with patch.object(matching, 'MINIMAX_API_KEY', ''), patch.object(matching, '_text_config', return_value=('test-only','https://test.invalid/v1/chat/completions','deepseek-flash')), patch.object(matching, '_chat_content', new=chat):
+            result = await matching.image_to_prompt(encoded, 'image/jpeg', '保留布局')
+        self.assertEqual(result['description'], 'a silver exhibition hall')
+        self.assertEqual(result['optimized_prompt'], 'silver exhibition hall, soft light')
+        image_blocks = chat.call_args_list[0].args[2][0]['content']
+        self.assertEqual(image_blocks[1]['image_url']['url'], 'data:image/png;base64,'+encoded)
+        self.assertIn('保留布局', chat.call_args_list[1].args[2][0]['content'])
+
+    async def test_invalid_image_never_calls_model(self):
+        with patch.object(matching, '_text_config', return_value=('test-only','https://test.invalid/v1/chat/completions','deepseek-flash')), patch.object(matching, '_chat_content', new=AsyncMock()) as chat:
+            result = await matching.image_to_prompt('not-valid-base64!')
+        self.assertTrue(result['error'])
+        chat.assert_not_called()
+
     async def test_compatible_provider_uses_final_answer_not_reasoning(self):
         def respond(request):
             payload = json.loads(request.content)

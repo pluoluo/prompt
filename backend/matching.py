@@ -1,5 +1,7 @@
 import os
 import json
+import base64
+import binascii
 import httpx
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -331,9 +333,23 @@ def _fallback_match(
 
 
 async def image_to_prompt(image_base64: str, media_type: str = "image/jpeg", extra_requirements: str = "") -> Dict[str, Any]:
-    """Analyze image via MiniMax VLM (coding plan) + generate structured Chinese prompt."""
-    if not MINIMAX_API_KEY:
-        return {"optimized_prompt": "请配置 MINIMAX_API_KEY", "error": "No API key"}
+    """Analyze images with the configured compatible model, or legacy MiniMax VLM."""
+    if not MINIMAX_API_KEY and not _text_config()[0]:
+        return {"optimized_prompt": "", "error": "请配置 API_KEY 和 Endpoint"}
+
+    # The legacy browser sends image/jpeg for every upload; use the real file format.
+    try:
+        raw = base64.b64decode(image_base64, validate=True)
+    except (ValueError, binascii.Error):
+        return {"optimized_prompt": "", "error": "图片数据无效，请重新上传"}
+    if raw.startswith(b'\xff\xd8\xff'):
+        media_type = 'image/jpeg'
+    elif raw.startswith(b'\x89PNG\r\n\x1a\n'):
+        media_type = 'image/png'
+    elif raw.startswith(b'RIFF') and raw[8:12] == b'WEBP':
+        media_type = 'image/webp'
+    else:
+        return {"optimized_prompt": "", "error": "请上传 JPEG、PNG 或 WebP 图片"}
 
     vlm_url = "https://api.minimaxi.com/v1/coding_plan/vlm"
     data_url = f"data:{media_type};base64,{image_base64}"
@@ -343,38 +359,36 @@ async def image_to_prompt(image_base64: str, media_type: str = "image/jpeg", ext
 
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
-            # Step 1: VLM image description
-            vlm_resp = await client.post(vlm_url, headers={
-                "Authorization": f"Bearer {MINIMAX_API_KEY}",
-                "Content-Type": "application/json"
-            }, json={"prompt": prompt_text, "image_url": data_url})
-            vlm_resp.raise_for_status()
-            vlm_result = vlm_resp.json()
-            if vlm_result.get("base_resp", {}).get("status_code") != 0:
-                return {"optimized_prompt": "图像分析失败", "error": vlm_result.get("base_resp", {}).get("status_msg", "")}
-            description = vlm_result.get("content", "")
+            # Step 1: Send the actual image, not just its description or URL text.
+            if _text_config()[0]:
+                description = await _chat_content(client,
+                    '你是图像分析师。只描述实际可见内容，包括主体、空间布局、构图、材质、光线、色彩和风格。模糊文字或不确定物件请明确说明，不要编造。',
+                    [{'role': 'user', 'content': [
+                        {'type': 'text', 'text': prompt_text},
+                        {'type': 'image_url', 'image_url': {'url': data_url}}
+                    ]}], max_tokens=3000)
+            else:
+                vlm_resp = await client.post(vlm_url, headers={
+                    "Authorization": f"Bearer {MINIMAX_API_KEY}",
+                    "Content-Type": "application/json"
+                }, json={"prompt": prompt_text, "image_url": data_url})
+                vlm_resp.raise_for_status()
+                vlm_result = vlm_resp.json()
+                if vlm_result.get("base_resp", {}).get("status_code") != 0:
+                    return {"optimized_prompt": "图像分析失败", "error": vlm_result.get("base_resp", {}).get("status_msg", "")}
+                description = vlm_result.get("content", "")
 
             # Step 2: Convert to structured prompt
             if description:
-                text_resp = await client.post(MINIMAX_API_URL, headers={
-                    "X-Api-Key": MINIMAX_API_KEY, "Content-Type": "application/json", "anthropic-version": "2023-06-01"
-                }, json={
-                    "model": "MiniMax-M2.7", "temperature": 0.7, "max_tokens": 2000,
-                    "system": "You are a prompt engineer. Convert the image description into a structured Chinese prompt. Output ONLY valid JSON: {\"optimized_prompt\": \"the prompt text\"}. Use GPT Image 2 structure. Must be in Chinese.",
-                    "messages": [{"role": "user", "content": f"图片描述：\n{description}\n\n转换为结构化中文提示词。"}]
-                })
-                text_resp.raise_for_status()
-                text_result = text_resp.json()
-                content = ""
-                for block in text_result.get("content", []):
-                    if block.get("type") == "text":
-                        content = block.get("text", "")
-                        break
+                content = await _chat_content(client,
+                    '你是生图提示词工程师。基于图片描述生成结构化中文生图提示词，涵盖主体、构图、材质、光线、色彩和风格。不要编造品牌或无法辨认的文字。只输出合法 JSON：{"optimized_prompt":"提示词正文"}。',
+                    [{'role': 'user', 'content': f'图片描述：\n{description}\n\n额外需求：{extra_requirements}\n\n转换为结构化中文提示词。'}], max_tokens=3000)
                 j_start = content.find("{"); j_end = content.rfind("}") + 1
                 if j_start != -1 and j_end != -1:
                     parsed = json.loads(content[j_start:j_end])
                     return {"description": description, "optimized_prompt": parsed.get("optimized_prompt", description)}
                 return {"description": description, "optimized_prompt": description}
+            return {"optimized_prompt": "", "error": "模型未返回图片描述，请重试"}
     except Exception as e:
         print(f"Image-to-prompt error: {e}")
         return {"optimized_prompt": "图像分析失败，请稍后重试", "error": str(e)}

@@ -49,7 +49,7 @@ LLM_MODEL=deepseek-flash
 IMAGE_API_URL=http://localhost:8766
 ```
 
-文字改写优先使用同时配置的 `API_KEY` 和 `Endpoint`，模型默认 `deepseek-flash`，可通过 `LLM_MODEL` 修改。`Endpoint` 支持站点根地址、`/v1` 地址或完整 `/v1/chat/completions` 地址。配置修改后重启后端。未配置新接口时，文字改写兼容旧的 `MINIMAX_API_KEY`。图像反推仍使用单独的 MiniMax 图片理解接口，不会因切换文字模型自动恢复。
+文字改写与图像反推优先使用同时配置的 `API_KEY` 和 `Endpoint`，模型默认 `deepseek-flash`，可通过 `LLM_MODEL` 修改。`Endpoint` 支持站点根地址、`/v1` 地址或完整 `/v1/chat/completions` 地址。图像反推会发送 JPEG、PNG 或 WebP 图片，通过图片描述与提示词整理两个步骤返回结果；所选接口和模型需要支持图片输入。配置修改后重启后端。未配置新接口时，兼容旧的 `MINIMAX_API_KEY` 及 MiniMax 图片理解接口。
 
 ### 3. 安装依赖
 
