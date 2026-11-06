@@ -1245,6 +1245,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="./space-generator.css?v=20261106">
 </head>
 <body>
     <div id="app">
@@ -1255,6 +1256,9 @@
                 <span>Prompt Portal</span>
             </div>
             <nav class="header-nav">
+                <div class="header-nav-item" :class="{active: currentPage === 'space'}" @click="navigate('space')">
+                    空间设计
+                </div>
                 <div class="header-nav-item" :class="{active: currentPage === 'match'}" @click="navigate('match')">
                     AI 优化提示词
                 </div>
@@ -1289,7 +1293,7 @@
             </div>
         </header>
         
-        <div class="app-container">
+        <div class="app-container" :class="{'space-mode': currentPage === 'space'}">
             <!-- Sidebar -->
             <div class="sidebar">
                 <div class="category-list" v-if="currentPage === 'home' || currentPage === 'edit'">
@@ -1329,6 +1333,7 @@
             
             <!-- Main Content -->
             <div class="main-content">
+                <space-generator v-if="currentPage === 'space'" @use-ai="useSpacePrompt"></space-generator>
                 <!-- Home Page -->
                 <div v-if="currentPage === 'home'">
                     <div class="page-header">
@@ -2296,12 +2301,15 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
         <div class="toast" :class="{show: toast.show}">{{ toast.message }}</div>
     </div>
     
+    <script src="./space-core.js?v=20261106"></script>
+    <script src="./space-generator.js?v=20261106"></script>
     <script>
         const { createApp, ref, computed, onMounted } = Vue;
         
         const API_BASE = '';
         
         createApp({
+            components: {'space-generator': window.SpaceGenerator},
             setup() {
                 // ── Auth ─────────────────────────────────────
                 const authToken = ref(localStorage.getItem('auth_token') || '');
@@ -2946,6 +2954,18 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     templateRefForAI.value = null;
                 }
 
+                function useSpacePrompt(result) {
+                    resetConversation();
+                    templateRefForAI.value = {
+                        id: null, title: result.title, prompt: result.prompt,
+                        category: result.category, styles: [], scenes: [],
+                        description: '来自空间设计生成器'
+                    };
+                    matchInput.value = '';
+                    currentPage.value = 'match';
+                    window.location.hash = 'match';
+                }
+
                 function useTemplateInAI() {
                     resetConversation();
                     templateRefForAI.value = {
@@ -3374,7 +3394,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     if (hash.startsWith('edit/')) {
                         const id = parseInt(hash.split('/')[1]);
                         editTemplate(id);
-                    } else if (['home', 'match', 'submit', 'guide', 'gallery', 'image2text'].includes(hash)) {
+                    } else if (['home', 'match', 'submit', 'guide', 'gallery', 'image2text', 'space'].includes(hash)) {
                         if (hash === 'gallery' && !galleryCases.value.length && !galleryLoading.value) {
                             loadGalleryCases();
                         }
@@ -3459,6 +3479,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
                     resetConversation,
                     regeneratePrompt,
                     useTemplateInAI,
+                    useSpacePrompt,
                     useTemplateInAIFromCard,
                     copyToClipboard,
                     copyConvPrompt,

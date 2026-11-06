@@ -33,3 +33,9 @@ prompt-portal-nginx.conf
 
 # Gallery images (downloaded from GitHub / user uploads)
 backend/data/gallery_images/
+
+# Private/imported prompt libraries remain on the deployment host.
+frontend/data/*.local.json
+frontend/data/space-preview.local/
+.space-generator-backups/
+.space-generator-stage/

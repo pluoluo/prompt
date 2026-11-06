@@ -8,6 +8,7 @@ AI 图像提示词管理与优化平台，基于 GPT Image 2 结构化方法论�
 
 ## 功能
 
+- **空间设计生成器** — 分类预设、动态参数、文字/JSON 自定义、多选、实时 JSON、浏览器保存进度，并可继续使用现有 AI 改写。预设库作为本地文件单独安装。
 - **模板库** — 分类筛选、关键词搜索、风格/场景标签多选
 - **案例库** — 447 个 GPT Image 2 案例，中英文切换，图片懒加载
 - **AI 优化生成** — MiniMax API 驱动，多轮对话，模板改写/自由生成双模式
@@ -160,6 +161,28 @@ prompt/
 ├── .env                     # 环境变量
 └── README.md
 ```
+
+## 空间设计生成器安装
+
+前端新增“空间设计”导航，支持 `/static/index.html#space` 和 nginx 首页的 `/#space`。
+本地预设库位于 `frontend/data/space-presets.local.json`，该文件与参考图目录均被 Git 忽略。
+仓库只包含生成器代码；导入的第三方文案和图片保留各自的来源及使用条件，不包含在本仓库的 MIT 授权中。
+
+完整参数文件格式为 `{ "groups": { "分组编号": { "name": "分类", "presets": [{ "key": "预设编号", "name": "标题", "sections": { "分组名称": { "fields": { "字段名": { "label": "显示名", "type": "button-select", "options": [{ "label": "选项", "value": "完整提示词" }], "default": "完整提示词" } } } } }] } } }`。
+支持 `button-select`、`select`、`multi-select`、`switch`、`boolean`、`text` 类型；预设无独立 sections 时使用分类的 sections。
+没有安装服务端预设文件时，页面提供“选择预设文件”，可在当前页面载入完整参数 JSON。
+
+将更新包解压到单独目录后，先检查目标项目（不会写入文件）：
+
+```bash
+python3 tools/install_space_generator.py --project-dir /实际部署目录/prompt
+```
+
+检查通过后增加 `--apply` 安装。工具会在目标项目 `.space-generator-backups/` 下备份被替换的文件，并在已有首页上应用小范围接入，保留其他本地修改；服务端配置、API 密钥、原模板库和案例库均不会被更新。
+预设文件不在更新包内时可通过 `--library /路径/完整参数.json` 指定。生成器只使用 `preview.items[].localImage` 中的本地参考图路径，不热链第三方图片。
+安装仅更新静态前端文件，不要求重启后端。刷新浏览器后打开“空间设计”入口。
+
+基础检查：`node --test tests/space-core.test.cjs`。可用 `SPACE_PRESET_LIBRARY` 和 `SPACE_EXPECTED_PREVIEWS` 指定私有预设库与采集的默认结果，额外验证完整默认输出。
 
 ## License
 
