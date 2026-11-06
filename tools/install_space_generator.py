@@ -8,11 +8,37 @@ from pathlib import Path
 
 
 def patch_html(text):
+    def image_bridge(current):
+        current = current.replace('v=20261106"', 'v=20261106-2"')
+        current = current.replace(' @use-ai="useSpacePrompt"></space-generator>', ' @use-ai="useSpacePrompt" :image-api-url="imageApiUrl" @generate-image="generateImage"></space-generator>')
+        current = current.replace("const imageApiUrl = ref('http://localhost:8766');", "const imageApiUrl = ref('');")
+        old = '''                function generateImage(prompt) {
+                    if (!prompt) return;
+                    const url = imageApiUrl.value + '/?prompt=' + encodeURIComponent(prompt);
+                    window.open(url, '_blank');
+                }'''
+        new = '''                function generateImage(prompt) {
+                    if (!prompt) return;
+                    try {
+                        const url = window.SpacePromptCore.imageDestination(imageApiUrl.value, prompt);
+                        const tab = window.open(url, '_blank');
+                        if (tab) tab.opener = null;
+                        else showToast('浏览器阻止了新标签页，请允许此站点打开新标签页后重试。');
+                    } catch (error) {
+                        showToast(error.message || '生图应用地址无效，请检查 IMAGE_API_URL 配置。');
+                    }
+                }'''
+        if 'window.SpacePromptCore.imageDestination' not in current:
+            if current.count(old) != 1:
+                raise ValueError('The image-generation bridge could not be located.')
+            current = current.replace(old, new, 1)
+        return current
+
     if '<space-generator ' in text:
         markers = ['useSpacePrompt', 'window.SpaceGenerator', './space-core.js', './space-generator.js', './space-generator.css']
         if not all(marker in text for marker in markers):
             raise ValueError('An incomplete generator installation was found; restore its original index first.')
-        return text
+        return image_bridge(text)
 
     def replace(old, new):
         nonlocal text
@@ -50,7 +76,7 @@ def patch_html(text):
                 function useTemplateInAI() {''')
     replace("['home', 'match', 'submit', 'guide', 'gallery', 'image2text'].includes(hash)", "['home', 'match', 'submit', 'guide', 'gallery', 'image2text', 'space'].includes(hash)")
     replace('                    useTemplateInAI,', '                    useTemplateInAI,\n                    useSpacePrompt,')
-    return text
+    return image_bridge(text)
 
 
 def safe_target(root, relative):

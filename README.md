@@ -165,6 +165,7 @@ prompt/
 ## 空间设计生成器安装
 
 前端新增“空间设计”导航，支持 `/static/index.html#space` 和 nginx 首页的 `/#space`。
+“去生成图像”读取后端 `/api/config` 暴露的 `IMAGE_API_URL`，在新标签页通过 `prompt` 参数预填当前完整 JSON；不自动提交生图请求。目标应用需要支持此参数（本地 image-api 前端已支持）。
 本地预设库位于 `frontend/data/space-presets.local.json`，该文件与参考图目录均被 Git 忽略。
 仓库只包含生成器代码；导入的第三方文案和图片保留各自的来源及使用条件，不包含在本仓库的 MIT 授权中。
 

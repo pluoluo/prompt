@@ -14,7 +14,8 @@
         return configPromise;
     }
     window.SpaceGenerator = {
-        emits: ['use-ai'],
+        props: {imageApiUrl: {type: String, default: ''}},
+        emits: ['use-ai', 'generate-image'],
         setup(_, {emit}) {
             const {ref, computed, watch, onMounted} = Vue;
             const config = ref(null), loading = ref(true), error = ref(''), status = ref('');
@@ -154,11 +155,9 @@
             function focusOutput() {
                 document.getElementById('space-output')?.scrollIntoView({behavior: 'smooth', block: 'start'});
             }
-            async function openDoubao() {
-                const tab = window.open('https://www.doubao.com/chat/', '_blank');
-                if (tab) tab.opener = null;
-                const copied = await copy();
-                if (copied) status.value = tab ? '已复制，请在豆包中粘贴并添加原图。' : '已复制；浏览器阻止了新窗口，可手动打开豆包。';
+            function goGenerate() {
+                persist();
+                emit('generate-image', prompt.value);
             }
             function previewImage(event) {
                 const file = event.target.files[0]; if (!file) return;
@@ -171,7 +170,7 @@
             return {loading, error, status, config, groupKey, presetKey, search, values, extra, customOpen, customDraft,
                 reference, previewFailed, presetImage, confirmReset, groups, group, preset, sectionList, filteredPresets, count, prompt, load, importConfig,
                 selectGroup, selectPreset, choose, selected, openCustom, applyCustom, customValues, summary,
-                resetPreset, copy, download, useAI, focusOutput, openDoubao, previewImage, optionItems: Core.optionItems};
+                resetPreset, copy, download, useAI, focusOutput, goGenerate, previewImage, optionItems: Core.optionItems};
         },
         template: `
         <div class="space-studio">
@@ -200,7 +199,7 @@
                 <aside class="sp-output" id="space-output"><div class="sp-output-top"><h2>{{ preset?.name }}</h2><p>先保持默认，只调整你需要改变的部分。</p></div>
                     <div class="sp-reference"><img v-if="reference || (presetImage && !previewFailed)" :src="reference || presetImage" :alt="reference ? '你选择的场景参考图' : preset.name + ' · 预设效果参考'" @error="previewFailed = true"><label class="sp-reference-label">{{ reference ? '更换场景参考图' : '＋ 选择自己的场景参考图' }}<input class="sp-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" @change="previewImage"><br><small>仅在本机预览，生成提示词时不会上传</small></label><button v-if="reference" class="sp-link-btn" @click="reference = ''">查看预设参考图</button></div>
                     <div class="sp-output-tabs"><strong>JSON 提示词</strong><span>● 实时更新</span></div><pre class="sp-code" tabindex="0" aria-label="JSON 提示词结果">{{ prompt }}</pre>
-                    <div class="sp-actions"><button class="sp-btn sp-btn-primary" @click="copy">复制 JSON</button><button class="sp-btn" @click="download">下载 JSON</button><button class="sp-btn sp-btn-wide" @click="useAI">继续用 AI 改写 →</button><button class="sp-link-btn sp-btn-wide" @click="openDoubao">复制并打开豆包 ↗</button></div>
+                    <div class="sp-actions"><button class="sp-btn sp-btn-primary" @click="copy">复制 JSON</button><button class="sp-btn" @click="download">下载 JSON</button><button class="sp-btn sp-btn-wide" @click="useAI">继续用 AI 改写 →</button><button class="sp-btn sp-btn-primary sp-btn-wide" :disabled="!imageApiUrl" @click="goGenerate">去生成图像</button></div>
                     <div v-if="status" class="sp-status" role="status">{{ status }}</div>
                     <div class="sp-source">预设来源：LIN 网站公开前台 · 交流学习整理<br><a href="https://154.201.65.81/" target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a></div>
                 </aside>

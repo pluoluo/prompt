@@ -40,6 +40,16 @@ test('reject empty or unsupported configurations', () => {
 });
 
 const library = process.env.SPACE_PRESET_LIBRARY;
+test('image app URL preserves full JSON and existing base-path configuration', () => {
+    const prompt = '{\n"材质": "白色 & 木纹 + 金属", "比例": "16:9"\n}';
+    const result = new URL(Core.imageDestination('http://nas:8080/studio?mode=edit', prompt));
+    assert.equal(result.pathname, '/studio');
+    assert.equal(result.searchParams.get('mode'), 'edit');
+    assert.equal(result.searchParams.get('prompt'), prompt);
+    assert.throws(() => Core.imageDestination('', prompt));
+    assert.throws(() => Core.imageDestination('javascript:alert(1)', prompt));
+});
+
 test('private library defaults match all captured public previews', {skip: !library}, () => {
     const data = JSON.parse(fs.readFileSync(library, 'utf8'));
     const expectedPath = process.env.SPACE_EXPECTED_PREVIEWS;

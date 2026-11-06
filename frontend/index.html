@@ -1245,7 +1245,7 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="./space-generator.css?v=20261106">
+    <link rel="stylesheet" href="./space-generator.css?v=20261106-2">
 </head>
 <body>
     <div id="app">
@@ -1333,7 +1333,7 @@
             
             <!-- Main Content -->
             <div class="main-content">
-                <space-generator v-if="currentPage === 'space'" @use-ai="useSpacePrompt"></space-generator>
+                <space-generator v-if="currentPage === 'space'" @use-ai="useSpacePrompt" :image-api-url="imageApiUrl" @generate-image="generateImage"></space-generator>
                 <!-- Home Page -->
                 <div v-if="currentPage === 'home'">
                     <div class="page-header">
@@ -2301,8 +2301,8 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
         <div class="toast" :class="{show: toast.show}">{{ toast.message }}</div>
     </div>
     
-    <script src="./space-core.js?v=20261106"></script>
-    <script src="./space-generator.js?v=20261106"></script>
+    <script src="./space-core.js?v=20261106-2"></script>
+    <script src="./space-generator.js?v=20261106-2"></script>
     <script>
         const { createApp, ref, computed, onMounted } = Vue;
         
@@ -2475,7 +2475,7 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
 
                 const toast = ref({ show: false, message: '' });
                 const isEditing = ref(false);
-                const imageApiUrl = ref('http://localhost:8766');
+                const imageApiUrl = ref('');
 
                 const submitForm = ref({
                     title: '',
@@ -2708,8 +2708,14 @@ Make it suitable for a social ad and a landing-page hero crop.</div>
 
                 function generateImage(prompt) {
                     if (!prompt) return;
-                    const url = imageApiUrl.value + '/?prompt=' + encodeURIComponent(prompt);
-                    window.open(url, '_blank');
+                    try {
+                        const url = window.SpacePromptCore.imageDestination(imageApiUrl.value, prompt);
+                        const tab = window.open(url, '_blank');
+                        if (tab) tab.opener = null;
+                        else showToast('浏览器阻止了新标签页，请允许此站点打开新标签页后重试。');
+                    } catch (error) {
+                        showToast(error.message || '生图应用地址无效，请检查 IMAGE_API_URL 配置。');
+                    }
                 }
 
                 async function editTemplate(id) {

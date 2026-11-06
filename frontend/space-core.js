@@ -95,5 +95,13 @@
         if (!count) throw new Error('预设文件中没有可用预设');
         return count;
     }
-    return {fieldId, optionItems, initialValue, sectionsFor, defaults, compose, restore, validateConfig};
+    function imageDestination(base, prompt) {
+        if (!base || typeof base !== 'string') throw new Error('生图应用地址尚未加载，请稍后重试。');
+        const url = new URL(base);
+        if (!['http:', 'https:'].includes(url.protocol)) throw new Error('生图应用地址必须使用 HTTP 或 HTTPS。');
+        if (typeof prompt !== 'string' || !prompt.trim()) throw new Error('请先准备提示词。');
+        url.searchParams.set('prompt', prompt);
+        return url.toString();
+    }
+    return {fieldId, optionItems, initialValue, sectionsFor, defaults, compose, restore, validateConfig, imageDestination};
 });
