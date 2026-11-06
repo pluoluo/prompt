@@ -11,7 +11,7 @@ AI 图像提示词管理与优化平台，基于 GPT Image 2 结构化方法论�
 - **空间设计生成器** — 分类预设、动态参数、文字/JSON 自定义、多选、实时 JSON、浏览器保存进度，并可继续使用现有 AI 改写。预设库作为本地文件单独安装。
 - **模板库** — 分类筛选、关键词搜索、风格/场景标签多选
 - **案例库** — 447 个 GPT Image 2 案例，中英文切换，图片懒加载
-- **AI 优化生成** — MiniMax API 驱动，多轮对话，模板改写/自由生成双模式
+- **AI 优化生成** — 支持 DeepSeek Flash 等 OpenAI 兼容接口，多轮对话，模板改写/自由生成双模式
 - **提示词撰写指南** — GPT Image 2 官方指南内嵌
 - **在线编辑** — 模板/案例可编辑、删除，提交新模板
 - **双语切换** — 分类/风格/场景/Prompt 中英文显示
@@ -24,7 +24,7 @@ AI 图像提示词管理与优化平台，基于 GPT Image 2 结构化方法论�
 | 前端 | Vue 3 CDN 单文件 SPA |
 | 数据 | JSON 文件存储 |
 | 代理 | nginx |
-| AI | MiniMax API (Anthropic 兼容格式) |
+| AI | OpenAI 兼容文字接口，兼容旧 MiniMax 配置 |
 
 ## 生产环境部署
 
@@ -43,9 +43,13 @@ cp .env.example .env
 ```
 
 ```env
-MINIMAX_API_KEY=your_api_key_here
+API_KEY=your_api_key_here
+Endpoint=https://your-provider.example/v1
+LLM_MODEL=deepseek-flash
 IMAGE_API_URL=http://localhost:8766
 ```
+
+文字改写优先使用同时配置的 `API_KEY` 和 `Endpoint`，模型默认 `deepseek-flash`，可通过 `LLM_MODEL` 修改。`Endpoint` 支持站点根地址、`/v1` 地址或完整 `/v1/chat/completions` 地址。配置修改后重启后端。未配置新接口时，文字改写兼容旧的 `MINIMAX_API_KEY`。图像反推仍使用单独的 MiniMax 图片理解接口，不会因切换文字模型自动恢复。
 
 ### 3. 安装依赖
 

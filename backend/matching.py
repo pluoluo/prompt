@@ -1,6 +1,8 @@
 import os
 import json
 import httpx
+from pathlib import Path
+from urllib.parse import urlsplit
 from typing import List, Dict, Any, Optional
 
 
@@ -16,6 +18,49 @@ if not _minimax_key:
                     break
 MINIMAX_API_KEY = _minimax_key
 MINIMAX_API_URL = "https://api.minimaxi.com/anthropic/v1/messages"
+
+# Prefer the configured OpenAI-compatible text endpoint; keep MiniMax as legacy fallback.
+def _text_config():
+    from dotenv import dotenv_values
+    values = dict(dotenv_values(Path(__file__).resolve().parent.parent / '.env'))
+    values.update(os.environ)
+    key = values.get('API_KEY') or ''
+    endpoint = (values.get('Endpoint') or values.get('ENDPOINT') or '').rstrip('/')
+    model = values.get('LLM_MODEL') or 'deepseek-flash'
+    if not key or not endpoint:
+        return '', '', model
+    parsed = urlsplit(endpoint)
+    if parsed.scheme not in ('http', 'https') or not parsed.netloc or parsed.query or parsed.fragment:
+        raise ValueError('Endpoint must be an HTTP(S) API base URL')
+    if not endpoint.endswith('/chat/completions'):
+        if not endpoint.endswith('/v1'):
+            endpoint += '/v1'
+        endpoint += '/chat/completions'
+    return key, endpoint, model
+
+
+async def _chat_content(client, system, messages, max_tokens=3000):
+    key, endpoint, model = _text_config()
+    if key:
+        response = await client.post(endpoint, headers={
+            'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'
+        }, json={
+            'model': model, 'messages': [{'role': 'system', 'content': system}, *messages],
+            'temperature': 0.7, 'max_tokens': max_tokens
+        })
+        response.raise_for_status()
+        content = response.json()['choices'][0]['message'].get('content')
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError('Text model returned no final answer')
+        return content
+    response = await client.post(MINIMAX_API_URL, headers={
+        'X-Api-Key': MINIMAX_API_KEY, 'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
+    }, json={'model': 'MiniMax-M2.7', 'system': system, 'messages': messages,
+             'temperature': 0.7, 'max_tokens': max_tokens})
+    response.raise_for_status()
+    return ''.join(block.get('text', '') for block in response.json().get('content', [])
+                   if block.get('type') == 'text')
 
 CATEGORIES = [
     "摄影与写实",
@@ -42,7 +87,7 @@ async def match_prompt(
     template_ref: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Match user input to templates using MiniMax LLM. Supports multi-turn conversation and template reference."""
-    if not MINIMAX_API_KEY:
+    if not MINIMAX_API_KEY and not _text_config()[0]:
         return _fallback_match(user_input, templates, categories, template_ref)
 
     category_summary = "\n".join([f"- {c}" for c in categories])
@@ -186,12 +231,6 @@ async def match_prompt(
 
 请按照 GPT Image 2 方法论{'并结合对话历史上下文' if history else ''}，从模板列表中选出最匹配的 2-3 个模板（返回模板的完整标题，不要用索引号），然后生成一份可直接用于图像生成的中文 Prompt。optimized_prompt 必须用中文输出。"""
 
-    headers = {
-        "X-Api-Key": MINIMAX_API_KEY,
-        "Content-Type": "application/json",
-        "anthropic-version": "2023-06-01"
-    }
-
     messages = []
     if history:
         for h in history[-6:]:
@@ -201,30 +240,9 @@ async def match_prompt(
                 messages.append({"role": role, "content": content})
     messages.append({"role": "user", "content": user_prompt})
 
-    payload = {
-        "model": "MiniMax-M2.7",
-        "system": system_prompt,
-        "messages": messages,
-        "temperature": 0.7,
-        "max_tokens": 3000 if template_ref else 3000
-    }
-    
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(
-                MINIMAX_API_URL,
-                headers=headers,
-                json=payload
-            )
-            response.raise_for_status()
-            result = response.json()
-            
-            # Anthropic-compatible response format — find first "text" block (skip "thinking" blocks)
-            content = ""
-            for _block in result.get("content", []):
-                if _block.get("type") == "text":
-                    content = _block.get("text", "")
-                    break
+            content = await _chat_content(client, system_prompt, messages)
             
             json_start = content.find("{")
             json_end = content.rfind("}") + 1
@@ -256,7 +274,7 @@ async def match_prompt(
 
                 return result
     except Exception as e:
-        print(f"MiniMax API error: {e}")
+        print(f"Text API error: {type(e).__name__}")
     
     return _fallback_match(user_input, templates, categories, template_ref)
 
